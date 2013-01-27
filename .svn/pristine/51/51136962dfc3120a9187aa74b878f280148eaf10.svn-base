@@ -1,0 +1,146 @@
+package com.secretBox.yutnori;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCMultiplexLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.opengl.CCGLSurfaceView;
+import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.types.CGSize;
+import org.cocos2d.types.ccColor3B;
+
+import com.secretBox.yutnori.logic.Game;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
+
+public class YutnoriActivity extends Activity {
+    // private static final String LOG_TAG = SpritesTest.class.getSimpleName();
+    private CCGLSurfaceView mGLSurfaceView;
+    private CCScene scene = CCScene.node();
+    private CCScene gScene = CCScene.node();
+    private CCScene sScene = CCScene.node();
+   
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        mGLSurfaceView = new CCGLSurfaceView(this);
+        setContentView(mGLSurfaceView);
+        
+    }
+
+    public static final int kTagAnimationDance = 1;
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // attach the OpenGL view to a window
+        CCDirector.sharedDirector().attachInView(mGLSurfaceView);
+
+//        // set landscape mode
+//        CCDirector.sharedDirector().setLandscape(false);
+
+        // show FPS
+        CCDirector.sharedDirector().setDisplayFPS(true);
+
+        // frames per second
+        CCDirector.sharedDirector().setAnimationInterval(1.0f / 60);
+        
+        // set portrait
+        CCDirector.sharedDirector().setDeviceOrientation(CCDirector.kCCDeviceOrientationPortrait);
+        
+        
+        
+       
+        //testLayer t2 = new testLayer(100, 300);
+       	//CCMultiplexLayer l1 = CCMultiplexLayer.node(t1, t2);
+        //CCLayer l1 = CCLayer.node();
+        //t1.setPosition(0, 0);
+        //scene1.addChild(new testLayer(100, 500,ccColor3B.ccRED));
+        GameLayer gLayer = new GameLayer(100, 500,ccColor3B.ccRED);
+        StoryLayer sLayer = new StoryLayer(); 
+        
+        MenuLayer menu = new MenuLayer(gScene,sScene);
+        
+      
+        scene.addChild(menu);
+        gScene.addChild(gLayer);
+        sScene.addChild(sLayer);
+
+       
+       
+        
+        // Make the Scene active
+        CCDirector.sharedDirector().runWithScene(scene);
+
+       
+     
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        SoundEngine.sharedEngine().pauseSound();
+        CCDirector.sharedDirector().onPause();
+        
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SoundEngine.sharedEngine().resumeSound();
+        CCDirector.sharedDirector().onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        CCDirector.sharedDirector().end();
+       
+    }	
+    
+    
+    
+// static  class testmenu extends CCLayer{
+//		
+//		public testmenu(){
+//			CGSize s = CCDirector.sharedDirector().winSize();
+//		
+//			CCMenuItemImage img = CCMenuItemImage.item("start.png","start1.png", this,"startCallback");
+//			CCMenuItemImage img1 = CCMenuItemImage.item("exit.png","exit1.png",this, "exitCallback");
+//		      
+//		     CCMenu menu = CCMenu.menu(img, img1);
+//		     menu.setPosition(0,0);
+//		     img.setPosition(s.width/2-50, s.height/2+100);
+//		     img1.setPosition(s.width/2-50, s.height/2);
+//	       
+//		   addChild(menu);
+//		}
+//    }
+//	
+//	  public void startCallback(Object sender) {
+//		  CCScene s = CCScene.node();
+//			s.addChild(new testLayer(100, 500,ccColor3B.ccRED));
+//			CCDirector.sharedDirector().replaceScene(s);
+//	}
+//	 
+//	 public void exitCallback(Object sender) {
+//		
+//		 onDestroy();
+//	 
+//	}
+}

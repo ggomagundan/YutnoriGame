@@ -1,0 +1,85 @@
+package com.secretBox.yutnori.constants;
+
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.opengl.CCTexture2D;
+import org.cocos2d.types.CGSize;
+
+public class YutnoriBasicConstants {
+	
+	public final static CGSize s = CCDirector.sharedDirector().winSize();
+	
+	public final static float GAME_WIDTH = 480;
+	public final static float GAME_HEIGHT = 800;
+	
+	public final static int DISPLAY_WIDTH = (int) s.width;
+	public final static int DISPLAY_HEIGHT = (int) s.height;
+	
+	public static float scale;
+	public static boolean isWidthScale;
+	
+	public final static String BACK_KEY_IMG = "play_back_to_the_menu.png";
+	
+	public final static String GAME_BACKGROUND_IMG =  "game_img/play_background.png";
+	public final static String MENU_BACKGROUND_IMG =  "main_img/menu_background.png";
+	
+	public final static String GAME_START_BUTTON_IMG="main_img/menu_start_button.png"; 
+	public final static String GAME_START_BUTTON_PRESSED_IMG="main_img/menu_start_button_press.png";
+	
+	public final static String GAME_STORY_BUTTON_IMG="main_img/story.png"; 
+	public final static String GAME_STORY_BUTTON_PRESSED_IMG="main_img/story.png";
+	
+	public final static String GAME_MORE_EFFECT_PLAY_IMG="main_img/menu_volume2_button.png"; 
+	public final static String GAME_LESS_EFFECT_PLAY_IMG="main_img/menu_volume1_button.png";
+	public final static String GAME_EFFECT_NON_PLAY_IMG="main_img/menu_volumex_button.png";
+	
+	public final static String GAME_BACKSOUND_PLAY_IMG="main_img/menu_sound_button_on.png"; 
+	public final static String GAME_BACKSOUND_NON_PLAY_IMG="main_img/menu_sound_button_off.png";
+	
+	public final static String GAME_CREDIT_BUTTON_IMG="main_img/menu_credit_button.png"; 
+	public final static String GAME_CREDIT_BUTTON_PRESSED_IMG="main_img/menu_credit_button.png";
+	
+	public final static String CREDIT_BACKGROUND_IMG = "main_img/credit_sc.png";
+	public final static String CREDIT_EXIT_IMG = "main_img/menu_credit_popup_close_button.png";
+	
+	public final static String[] STORY_IMG_LIST =
+		{"main_img/first.png",
+			"main_img/second.png",
+			"main_img/end.png"	
+		};
+	
+	public final static String WOMAN_FILE_NAME = "game_img/play_horse_blue_dragon.png";
+	public final static String MAN_FILE_NAME = "game_img/play_horse_green_dragon.png";
+	public static final String HORSE_SELECT_IMG = "game_img/select_ring.png";
+	
+	public final static String GAME_EXIT_BACKGROUND_IMG = "end_img/exit_ask_background.png";
+	public final static String GAME_EXIT_YES_IMG = "end_img/exit_ask_yes_button.png";
+	public final static String GAME_EXIT_NO_IMG = "end_img/exit_ask_no_button.png";
+	
+	public final static String YUT_THROW_LAYER = "yut/play_popup_throw_background.png";
+	
+	public final static String[] EYE_PICTURE_NAMES={
+		"main_img/menu_dragon_eyes_open.png",
+			"main_img/menu_dragon_eyes_mid.png",
+			"main_img/menu_dragon_eyes_close.png"
+							
+			};
+	
+	
+	
+	public static boolean isBackKey= false;
+	public static boolean isBackSound, isSound;
+	
+	public static enum EFFECT_VOLUME{
+		MAX,
+		MIDDLE,
+		MIN
+	}
+	
+	public final static int CHARAC_MOVE_TIME = 1;
+	public final static int CHARAC_MOVE_HEIGHT = 50;
+	public final static int CHARAC_MOVE_JUMP_COUNT = 1;
+
+	
+	
+
+}

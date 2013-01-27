@@ -1,0 +1,239 @@
+package com.secretBox.yutnori;
+
+
+
+import org.cocos2d.actions.base.CCRepeatForever;
+import org.cocos2d.actions.ease.CCEaseExponentialIn;
+import org.cocos2d.actions.interval.CCAnimate;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.menus.CCMenuItemToggle;
+import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGSize;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.MotionEvent;
+
+public final class MenuLayer extends CCLayer {
+
+	protected CCScene gScene;
+	protected CCScene sScene;
+	private static Context app;
+	CGSize s = CCDirector.sharedDirector().winSize();
+	private CCLayer creditLayer = CCLayer.node();
+	private boolean isCreditVisible = false;
+	CCSprite exit;
+	private CCSprite eye_animation;
+	static boolean isBackSound, isSound;
+	CCAnimate animate;
+	public MenuLayer(CCScene gS, CCScene sS) {
+		
+		
+		String[] eyePictureNames={"menu_background_eye0.png",
+				"menu_background_eye1.png",
+				"menu_background_eye2.png",
+				"menu_background_eye3.png"				
+				};
+
+		app = CCDirector.sharedDirector().getActivity().getApplicationContext();
+		gScene = gS;
+		
+		sScene = sS;
+
+		// Display BackGround Image
+		CCSprite background = CCSprite.sprite("menu_background.png");
+		background.setPosition(CGPoint.make(s.width / 2, s.height / 2));
+		addChild(background);
+		
+		
+		// Set Screen Scale
+		if ((s.width / background.getTexture().getWidth()) >= (s.height / background.getTexture().getHeight())) {
+			background.setScale(s.height / background.getTexture().getHeight());
+			Log.d("PBS", "scale " + s.height / background.getTexture().getHeight());
+
+		} else {
+			background.setScale(s.width / background.getTexture().getWidth());
+			Log.d("PBS", "scale " + s.width / background.getTexture().getWidth());
+		}
+
+		
+		CCAnimation animation =  CCAnimation.animation("testAnimation",0.2f);
+		for(int i=0;i<eyePictureNames.length;i++)
+		{
+			animation.addFrame(eyePictureNames[i]);	
+		}
+		
+		eye_animation = CCSprite.sprite(eyePictureNames[0]);
+		animate = CCAnimate.action(animation);	
+		
+		
+		addChild(eye_animation);
+		
+		
+		eye_animation.setPosition((int)(s.width*0.347), (int)(s.height*0.423));
+		
+		
+		eye_animation.setScale(s.width / background.getTexture().getWidth());
+		
+		CCMenuItemImage gameStartButton = CCMenuItemImage.item("menu_background_button.png", "menu_background_button_click.png", this, "startCallback");
+		gameStartButton.setPosition((int)(s.width*0.773), (int)(s.height-s.height*0.771));
+		addChild(gameStartButton);
+		
+		
+		gameStartButton.setScale(s.width / background.getTexture().getWidth());
+
+		
+		CCMenuItemImage storyButton = CCMenuItemImage.item("story.png", "story.png",
+				this, "storyCallback");
+
+		CCMenu menu = CCMenu.menu(storyButton,gameStartButton);
+		menu.setPosition(0, 0);
+		
+		storyButton.setPosition(s.width / 5 *2, s.height / 5*3);
+
+		addChild(menu);
+
+		CCMenuItemToggle sound = CCMenuItemToggle.item(this, "soundCallback",
+				CCMenuItemImage.item("sound.png", "sound.png"),
+				CCMenuItemImage.item("sound1.png", "sound1.png"));
+
+		CCMenuItemToggle backSound = CCMenuItemToggle.item(this, "backsoundCallback",
+				CCMenuItemImage.item("backsound.png", "backsound.png"),
+				CCMenuItemImage.item("backsound1.png", "backsound1.png"));
+
+		CCMenuItemImage credit = CCMenuItemImage.item("credit.png", "credit.png", this, "creditCallback");
+
+		CCMenu optionMenu = CCMenu.menu(sound, backSound, credit);
+		
+		sound.setPosition(s.width / 3 * 2, 70);
+		backSound.setPosition(s.width / 3 * 2 + s.width / 8, 70);
+		credit.setPosition(s.width / 3 * 2 + s.width / 4, 70);
+		
+		optionMenu.setPosition(0, 0);
+		addChild(optionMenu);
+
+		makeCredit();
+
+		this.setIsTouchEnabled(true);
+		
+	}
+
+	private void makeCredit() {
+		// TODO Auto-generated method stub
+		creditLayer.setContentSize(CGSize.make(s.width / 2, s.height / 2));
+		creditLayer.setPosition(0, 0);
+
+		CCSprite creditSprite = CCSprite.sprite("credit_sc.png");
+		creditSprite.setPosition(s.width / 2, s.height / 2);
+
+		creditSprite.setOpacity(80);
+		creditLayer.addChild(creditSprite);
+
+		exit = CCSprite.sprite("end_credit.png");
+		exit.setPosition(s.width / 2, creditSprite.getPosition().y
+				- creditSprite.getTexture().getHeight() / 2
+				+ exit.getTexture().getHeight() / 2);
+
+		creditLayer.addChild(exit);
+
+		this.addChild(creditLayer);
+
+		creditLayer.setVisible(isCreditVisible);
+	}
+
+	@Override
+	public boolean ccTouchesMoved(MotionEvent e) {
+		// convert event location to CCPoint
+
+		CGPoint p = CCDirector.sharedDirector().convertToGL(
+				CGPoint.make(e.getX(), e.getY()));
+
+		// tmp = getItem(e.getX(), e.getY());
+
+		Log.d("PBS", "position " + e.getX() + " " + e.getY());
+		
+		if (isCreditVisible == true) {
+			if (e.getX() > exit.getPosition().x - exit.getTexture().getWidth()
+					/ 2
+					&& e.getX() < exit.getPosition().x
+							+ exit.getTexture().getWidth() / 2
+					&& e.getY() < s.height
+							- (exit.getPosition().y - exit.getTexture()
+									.getHeight() / 2)
+					&& e.getY() > s.height
+							- (exit.getPosition().y + exit.getTexture()
+									.getHeight() / 2)) {
+				isCreditVisible = false;
+				creditLayer.setVisible(false);
+			}
+		}
+
+		return true;
+	}
+
+	public void startCallback(Object sender) {
+		if (isCreditVisible == false) {
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(gScene);
+		}
+
+	}
+
+	public void storyCallback(Object sender) {
+		if (isCreditVisible == false) {
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(sScene);
+		}
+
+	}
+
+	public void soundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			SoundEngine.sharedEngine().playEffect(app, R.raw.effect);
+		}
+
+	}
+
+	public void backsoundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			if (isBackSound == false) {
+				SoundEngine.sharedEngine().pauseSound();
+				isBackSound = true;
+			} else {
+				SoundEngine.sharedEngine().resumeSound();
+				isBackSound = false;
+			}
+		}
+
+	}
+
+	public void creditCallback(Object sender) {
+
+		if (isCreditVisible == false) {
+			creditLayer.setVisible(true);
+			isCreditVisible = true;
+		}
+	}
+
+	@Override
+	public void onEnter() {
+		super.onEnter();
+		CCEaseExponentialIn ease = CCEaseExponentialIn.action(animate);
+		CCRepeatForever animates =  CCRepeatForever.action(ease);
+		
+		
+		eye_animation.runAction(animates);
+		// SoundEngine.sharedEngine().playSound(app, R.raw.backsound, true);
+
+	}
+
+}

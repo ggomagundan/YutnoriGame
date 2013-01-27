@@ -1,0 +1,324 @@
+package com.secretBox.yutnori;
+
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.sound.SoundEngine;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriLogicConstants;
+import com.secretBox.yutnori.constants.YutnoriLogicConstants.GameStep;
+import com.secretBox.yutnori.logic.Game;
+import com.secretBox.yutnori.logic.YutSet;
+
+public class GameManager {
+	
+//	private Map<Integer,Map<Integer,YutSet.PROPERTY>> horseID_nodeIDs_property = new HashMap<Integer,Map<Integer,YutSet.PROPERTY>>();
+
+
+	private GameStep gameStep;
+	public boolean isHumanTurn =true;
+	
+	
+	public YutSet.PROPERTY yutProperty;
+	
+	private static GameManager gm  =new GameManager();
+	private static Game game = new Game();
+
+	private CCScene mScene;
+	private CCScene gScene;
+	private CCScene sScene;
+	private MenuLayer mLayer;
+	private GameLayer gLayer;
+	private StoryLayer sLayer;
+	private ExitLayer eLayer;
+	private YutnoriActivity app;
+	public List<YutSet.PROPERTY> playerSaveMoveYutList = new LinkedList<YutSet.PROPERTY>();
+	public List<YutSet.PROPERTY> cpuSaveMoveYutList = new LinkedList<YutSet.PROPERTY>();
+
+	
+	private GameManager()
+	{
+		mScene = CCScene.node();
+		gScene = CCScene.node();
+		sScene = CCScene.node();
+		mLayer = new MenuLayer(gScene, sScene);
+		gLayer = new GameLayer();
+		sLayer = new StoryLayer(0);
+		eLayer = ExitLayer.getLayer();
+
+		
+		mScene.addChild(mLayer);
+		gScene.addChild(gLayer);
+		sScene.addChild(sLayer);
+		mLayer.applyScale(YutnoriBasicConstants.scale);
+		gLayer.applyScale(YutnoriBasicConstants.scale);
+		sLayer.applyScale(YutnoriBasicConstants.scale);
+		
+
+	}
+	
+	
+	public static GameManager getGame() {
+		
+		return gm;
+	}
+
+	public void start() {
+	
+		CCDirector.sharedDirector().runWithScene(mScene);
+	//	setLayerScale();
+		
+	}
+
+
+	public GameStep getStep()
+	{
+		return gameStep;
+	}
+	
+	
+	public void changeStep(YutnoriLogicConstants.GameStep toStep)
+	{
+		gameStep = toStep;
+	}
+	public void changeStep()
+	{
+		if(gameStep == YutnoriLogicConstants.GameStep.ENEMY_TURN)
+		{
+			gameStep  = YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.YUT_INTERACTION_TURN;
+		}
+		else if(gameStep == YutnoriLogicConstants.GameStep.YUT_INTERACTION_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.YUT_THROWING_TURN;
+			
+		}else if(gameStep == YutnoriLogicConstants.GameStep.YUT_THROWING_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.YUT_ANING_OFF_TURN;
+		}
+		else if(gameStep == YutnoriLogicConstants.GameStep.YUT_ANING_OFF_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.MAL_INTERACTION_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.MAL_INTERACTION_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.MOVE_INTERACTION_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.MOVE_INTERACTION_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.MOVE_ANING_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.MOVE_ANING_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.ENEMY_TURN;
+		}
+		
+	}
+
+	public boolean moveCharacter(int characterValue, int moveNumber) {
+
+		gLayer.moveCharater(characterValue, moveNumber);
+
+		return true;
+	}	
+	public void gameInit()
+	{
+		game.start();
+		playerSaveMoveYutList = new LinkedList<YutSet.PROPERTY>();
+		cpuSaveMoveYutList = new LinkedList<YutSet.PROPERTY>();
+		isHumanTurn = true;
+		gameStep = YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN;
+		gLayer.showYutThrowLayer();
+		
+		
+	}
+
+	public void changeTurn()
+	{
+		game.changeTurn();
+		if(isHumanTurn)
+			isHumanTurn =false;
+		else
+			isHumanTurn =true;
+		
+		//}while((winPlayer = game.getWinPlayer())==-1);
+	}
+
+	public boolean isStarted(int horseID)
+	{
+		return game.isStarted(horseID);
+	}
+	public int getHorseIDbyNodeID(int nodeID)
+	{
+		return game.getHorseIDbyNodeID(nodeID);
+	}
+	public Map<Integer,Map<Integer,Integer>> getAllHorsesPosition()
+	{
+		return game.getAllHorsesPosition();	
+	}
+	public int getHorsePosition(int horseID)
+	{
+		return game.getHorsePosition(horseID);
+	}
+	public YutSet.PROPERTY throwYuts()
+	{
+		return yutProperty = game.throwYuts();
+	}
+
+	public Map<Integer,Map<Integer,YutSet.PROPERTY>> getMovableInfo(List<YutSet.PROPERTY> yutSet)
+	{
+		return  game.getMovableInfo(yutSet);
+		//todo:UserPlayer 라면
+		//todo:움직일수 있는곳 표시
+		//todo:[사용자 입력] 움직일곳 터치
+
+		//todo:cpuPlayer 라면
+		//todo:AI로 움직일곳 선정
+		
+	}
+	public void move(int horseID,int nodeID)
+	{
+		game.move(horseID, nodeID);
+		
+	}
+	public boolean havePeerByHorseID(int horseID)
+	{
+		return game.havePeerByHorseID(horseID);
+	}
+
+	public void showOrHideLayer() {
+		
+		eLayer.showOrHideLayer();
+		
+	}
+	public boolean haveOtherTeamHorse(int nodeID){
+		return game.haveOtherTeamHorse(nodeID);
+	}
+
+
+
+
+	public void setBackSound() {
+		// TODO Auto-generated method stub
+		app.controlSound(true, 0);
+	}
+
+
+	public void setEffectSound(int volume) {
+
+		app.controlSound(false, volume);
+		
+	}
+
+
+	public void playEffect(String playName) {
+
+		int playNumber = 1;
+		
+		if(playName.equals("click")){
+			playNumber = 0;
+		}else if(playName.equals("turn")){
+			playNumber =1;
+		}else if(playName.equals("jing")){
+			playNumber = 2;
+		}else if(playName.equals("lose0")){
+			playNumber = 3;
+		}else if(playName.equals("lose1")){
+			playNumber = 4;
+		}else if(playName.equals("win")){
+			playNumber = 5;
+		}else if(playName.equals("back")){
+			playNumber = 6;
+		}
+		
+		if(YutnoriBasicConstants.currentVolume == YutnoriBasicConstants.EFFECT_VOLUME.MAX){
+				switch(playNumber){
+					case 0:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.button_click_max);
+						break;
+					case 1:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.changeturn_max);
+						break;
+					case 2:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.jing_max);
+						break;
+					case 3:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.lose0_max);
+						break;
+					case 4:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.lose1_max);
+						break;
+					case 5:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.win_max);
+						break;
+					case 6:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.back_max);
+						break;
+				}
+			}else if(YutnoriBasicConstants.currentVolume == YutnoriBasicConstants.EFFECT_VOLUME.MIDDLE){
+				switch(playNumber){
+					case 0:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.button_click_middle);
+						break;
+					case 1:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.changeturn_middle);
+						break;
+					case 2:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.jing_middle);
+						break;
+					case 3:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.lose0_middle);
+						break;
+					case 4:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.lose1_middle);
+						break;
+					case 5:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.win_middle);
+						break;
+					case 6:
+						SoundEngine.sharedEngine().playEffect(app, R.raw.back_middle);
+						break;
+				}
+			}
+		}
+
+
+	public void preLoadMusics() {
+		
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.effect_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.effect_middle);
+//		SoundEngine.sharedEngine().preloadSound(app, R.raw.blue_sky);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.button_click_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.changeturn_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.jing_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.lose0_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.lose1_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.win_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.back_max);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.button_click_middle);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.changeturn_middle);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.jing_middle);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.lose0_middle);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.lose1_middle);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.win_middle);
+//		SoundEngine.sharedEngine().preloadEffect(app, R.raw.back_middle);
+		
+	}
+		
+		
+		
+}
+
+	
+	
+
+	
+
+
+

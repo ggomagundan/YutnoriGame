@@ -1,0 +1,88 @@
+package com.secretBox.yutnori;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCMultiplexLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemLabel;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGSize;
+import org.cocos2d.types.ccColor3B;
+
+import android.util.Log;
+
+public class StoryLayer2 extends CCLayer {
+	CCMultiplexLayer mLayer;
+
+	public StoryLayer2() {
+		super();
+		CGSize s = CCDirector.sharedDirector().winSize();
+
+		CCMenuItemLabel label = CCMenuItemLabel.item("back", this,
+				"backCallback");
+
+		CCMenuItemLabel label1 = CCMenuItemLabel.item("pre", this,
+				"preCallback");
+
+		CCSprite background = CCSprite.sprite("end.png");
+		background.setPosition(CGPoint.ccp(s.width / 2, s.height / 2));
+
+		addChild(background);
+		// CCLabel cl = CCLabel.makeLabel("This is First", "Abduction.ttf", 24);
+		// cl.setColor(color);
+		// cl.setPosition(x,y);
+
+		// CCMenuItemLabel label2 = CCMenuItemLabel.item("next", this,
+		// "nextCallback");
+
+		CCMenu menu = CCMenu.menu();
+		menu.addChild(label1);
+		menu.addChild(label);
+		// menu.addChild(label2);
+		menu.setPosition(0, 0);
+
+		label.setPosition(s.getWidth() / 10 * 2, 50);
+		label1.setPosition(s.getWidth() / 10 * 8, 50);
+		// label2.setPosition(s.getWidth()/10*8, 50);
+
+		addChild(menu);
+		// addChild(cl);
+
+		// Set Screen Scale
+		if ((s.width / background.getTexture().getWidth()) >= (s.height / background
+				.getTexture().getHeight())) {
+			this.setScale(s.height / background.getTexture().getHeight());
+			Log.d("PBS", "scale " + s.height
+					/ background.getTexture().getHeight());
+
+		} else {
+			this.setScale(s.width / background.getTexture().getWidth());
+			Log.d("PBS", "scale " + s.width
+					/ background.getTexture().getWidth());
+		}
+
+	}
+
+	public void backCallback(Object Sender) {
+
+		CCDirector.sharedDirector().popScene();
+		CCDirector.sharedDirector().popScene();
+		CCDirector.sharedDirector().popScene();
+
+	}
+
+	public void preCallback(Object Sender) {
+
+		CCDirector.sharedDirector().popScene();
+
+	}
+
+	public void nextCallback(Object Sender) {
+
+		// StoryLayer sLayer1 = new StoryLayer(100, 600, ccColor3B.ccYELLOW);
+		// this.addChild(sLayer1);
+	}
+
+}

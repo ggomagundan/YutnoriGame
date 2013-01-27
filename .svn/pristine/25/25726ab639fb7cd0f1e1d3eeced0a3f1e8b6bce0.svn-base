@@ -1,0 +1,40 @@
+package com.secretBox.yutnori;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+
+
+public class SelectLayer extends CCLayer{
+	public CCSprite[] horsePosButtons = new CCSprite[YutnoriPointConstants.MOVE_POINT_LIST.size()];
+	public SelectLayer()
+	{
+		for(int i=0;i< YutnoriPointConstants.MOVE_POINT_LIST.size();i++)
+		{
+			horsePosButtons[i] = CCSprite.sprite(YutnoriBasicConstants.HORSE_SELECT_IMG);
+			addChild(horsePosButtons[i]);
+			CGPoint p = YutnoriPointConstants.MOVE_POINT_LIST.get(i);
+			horsePosButtons[i].setPosition(p.x,YutnoriBasicConstants.DISPLAY_HEIGHT-p.y);
+			horsePosButtons[i].setOpacity(200);
+		}
+	}
+	public void hideHorsePosButtons()
+	{
+		for(CCSprite horsePosButton:horsePosButtons)
+			horsePosButton.setVisible(false);
+	}
+	
+	public int findIndexFromHorsePosButtons(CCSprite sprite)
+	{
+		for(int i=0;i<horsePosButtons.length;i++)
+		{
+			if(horsePosButtons[i] == sprite)
+				return i;
+		}
+		return -1;
+	}
+
+
+}

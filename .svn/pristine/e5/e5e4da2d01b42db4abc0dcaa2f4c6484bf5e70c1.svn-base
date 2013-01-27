@@ -1,0 +1,100 @@
+package com.secretBox.yutnori.database;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+
+
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+public class DBManager extends SQLiteOpenHelper {
+
+	
+	
+	private SQLiteDatabase mDB;
+	
+	
+	
+	public DBManager(Context context) {
+		super(context, DBManageConstants.DB_NAME, null, DBManageConstants.DB_VERSION);
+		
+		
+	}
+	
+	@Override
+	public void onCreate(SQLiteDatabase db) {
+		db.execSQL("CREATE TABLE " + DBManageConstants.TABLE_NAME +"( effect INTEGER, backsound INTEGER);");
+		db.execSQL("INSERT INTO " + DBManageConstants.TABLE_NAME +" VALUES (2, 1);");
+		
+		
+	}
+	
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	
+	@Override
+	public void onOpen(SQLiteDatabase db) {
+		super.onOpen(db);
+		mDB = db;
+	}
+
+
+	public void update(DBManager mDBManager, boolean isControlBackSound, int volume) {
+		mDBManager.getWritableDatabase();
+		if(isControlBackSound == true){
+			if(YutnoriBasicConstants.isBackSound == true){
+				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET backsound = 0;");
+				YutnoriBasicConstants.isBackSound = false;
+				Log.d("PBS","backsound off");
+			} else { 
+				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET backsound = 1;");
+				YutnoriBasicConstants.isBackSound = true;
+				Log.d("PBS","backsound on");
+			}
+		} else{
+			if(volume == 2){
+				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET effect = 2;");
+				YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MAX;
+				Log.d("PBS","sound max");
+			}else if(volume == 1){
+				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET effect = 1;");
+				YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIDDLE;
+				Log.d("PBS","sound middle");
+			}else{
+				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET effect = 0;");
+				YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIN;
+				Log.d("PBS","sound min");
+			}
+		}
+		
+		mDBManager.close();
+
+		
+	}
+	
+	public int[] select(DBManager mDBManager) {
+		mDBManager.getReadableDatabase();
+	
+		
+		int[] values = new int[2];
+		
+		Cursor cursor = mDB.rawQuery("SELECT effect, backsound FROM "+DBManageConstants.TABLE_NAME, null);
+		while(cursor.moveToNext()) {
+			
+			values[0] = cursor.getInt(0);
+			values[1] = cursor.getInt(1);
+		    
+		}
+		return values;
+
+	}
+
+	
+}

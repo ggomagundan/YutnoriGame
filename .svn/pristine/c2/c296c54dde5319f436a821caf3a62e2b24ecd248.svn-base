@@ -1,0 +1,254 @@
+package com.secretBox.yutnori;
+
+import java.util.ArrayList;
+
+import org.cocos2d.actions.interval.CCJumpTo;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCMultiplexLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemLabel;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGSize;
+import org.cocos2d.types.ccColor3B;
+
+import android.R.integer;
+import android.util.Log;
+import android.view.MotionEvent;
+
+public class GameLayer extends CCLayer {
+	
+	ArrayList<CGPoint> pointList = new ArrayList<CGPoint>(); 
+	
+	
+	CGSize s = CCDirector.sharedDirector().winSize();
+	CCMultiplexLayer mLayer;
+	private CCScene scene;
+	CCSprite selectMob= null;
+	ArrayList<CCSprite> items = new ArrayList<CCSprite>();
+	boolean isSelect= false;
+	public GameLayer(float x, float y, ccColor3B color){
+		
+		
+		
+		super();
+	
+		
+		setPointList();
+		
+		
+		CCSprite background = CCSprite.sprite("game_background.png");
+		background.setScale(s.width/background.getTexture().getWidth());
+
+		//background.setScaleY(s.height/background.getTexture().getHeight());
+		
+		background.setPosition(CGPoint.make(s.width/2, s.height/2));
+		addChild(background);
+		
+		
+		CCMenuItemLabel label = CCMenuItemLabel.item("back", this, "backCallback");
+		label.setPosition(s.width/7*1, s.height/12*11);
+		
+		CCMenu menu = CCMenu.menu();
+		menu.addChild(label);
+		menu.setPosition(0,0);
+		
+		
+		
+		
+		
+		
+		
+		int characterPositionY = (int)(s.height-(s.height*0.91f));
+		
+		
+		// 540 * 960  Sensation
+		
+		CCSprite man_1 = CCSprite.sprite("mob.png");
+		man_1.setPosition(CGPoint.make((int)(s.width*0.12), characterPositionY)); 	
+		CCSprite man_2 = CCSprite.sprite("mob.png");				
+		man_2.setPosition(CGPoint.make((int)(s.width*0.2), characterPositionY));				
+		CCSprite man_3 = CCSprite.sprite("mob.png");
+		man_3.setPosition(CGPoint.make((int)(s.width*0.28), characterPositionY));	
+		CCSprite man_4 = CCSprite.sprite("mob.png");
+		man_4.setPosition(CGPoint.make((int)(s.width*0.36), characterPositionY));	
+		addChild(man_1);
+		addChild(man_2);
+		addChild(man_3);
+		addChild(man_4);
+		
+		Log.d("PBS","width " + s.width +  " "  + "height " + " " + s.height);
+		
+		
+		CCSprite woman_1 = CCSprite.sprite("mob1.png");
+		woman_1.setPosition(CGPoint.make((int)(s.width*0.6), characterPositionY));
+		CCSprite woman_2 = CCSprite.sprite("mob1.png");
+		woman_2.setPosition(CGPoint.make((int)(s.width*0.68), characterPositionY));
+		CCSprite woman_3 = CCSprite.sprite("mob1.png");
+		woman_3.setPosition(CGPoint.make((int)(s.width*0.76), characterPositionY));
+		CCSprite woman_4 = CCSprite.sprite("mob1.png");
+		woman_4.setPosition(CGPoint.make((int)(s.width*0.84), characterPositionY));
+		addChild(woman_1);
+		addChild(woman_2);
+		addChild(woman_3);
+		addChild(woman_4);
+		
+		// Moving Sprite
+		
+		items.add(man_1);
+		items.add(man_2);
+		items.add(man_3);
+		items.add(man_4);
+		
+		items.add(woman_1);
+		items.add(woman_2);
+		items.add(woman_3);
+		items.add(woman_4);
+		
+		
+		addChild(menu);
+	   
+	    
+		this.setIsTouchEnabled(true);
+		// Available Touch Event
+		
+		
+	}
+	
+	private void setPointList() {
+		// TODO Auto-generated method stub
+		pointList.add(CGPoint.make((int)(s.width*0.5), (int)(s.height*0.56875)));	// 0	
+		pointList.add(CGPoint.make((int)(s.width*0.7), (int)(s.height*0.55)));	// 1
+		pointList.add(CGPoint.make((int)(s.width*0.8), (int)(s.height*0.51)));	// 2
+		pointList.add(CGPoint.make((int)(s.width*0.87), (int)(s.height*0.47)));	// 3
+		pointList.add(CGPoint.make((int)(s.width*0.94), (int)(s.height*0.41)));	// 4
+		pointList.add(CGPoint.make((int)(s.width*0.94), (int)(s.height*0.32)));	// 5
+		pointList.add(CGPoint.make((int)(s.width*0.91), (int)(s.height*0.24)));	// 6
+		pointList.add(CGPoint.make((int)(s.width*0.87), (int)(s.height*0.18)));	// 7
+		pointList.add(CGPoint.make((int)(s.width*0.76), (int)(s.height*0.12)));	// 8
+		pointList.add(CGPoint.make((int)(s.width*0.66), (int)(s.height*0.1)));	// 9
+		pointList.add(CGPoint.make((int)(s.width*0.5), (int)(s.height*0.08)));	// 10
+		pointList.add(CGPoint.make((int)(s.width*0.36), (int)(s.height*0.09)));	// 11
+		pointList.add(CGPoint.make((int)(s.width*0.24), (int)(s.height*0.13)));	// 12
+		pointList.add(CGPoint.make((int)(s.width*0.15), (int)(s.height*0.18)));	// 13
+		pointList.add(CGPoint.make((int)(s.width*0.11), (int)(s.height*0.24)));	// 14
+		pointList.add(CGPoint.make((int)(s.width*0.07), (int)(s.height*0.32)));	// 15
+		pointList.add(CGPoint.make((int)(s.width*0.1), (int)(s.height*0.39)));	// 16
+		pointList.add(CGPoint.make((int)(s.width*0.16), (int)(s.height*0.47)));	// 17
+		pointList.add(CGPoint.make((int)(s.width*0.26), (int)(s.height*0.52)));	// 18
+		pointList.add(CGPoint.make((int)(s.width*0.35), (int)(s.height*0.55)));	// 19
+		pointList.add(CGPoint.make((int)(s.width*0.5), (int)(s.height*0.571)));	// 20
+//		pointList.add(CGPoint.make(273, 546));	// 0	
+//		pointList.add(CGPoint.make(379, 526));	// 1
+//		pointList.add(CGPoint.make(438, 492));	// 2
+//		pointList.add(CGPoint.make(468, 454));	// 3
+//		pointList.add(CGPoint.make(515, 402));	// 4
+//		pointList.add(CGPoint.make(511, 308));	// 5
+//		pointList.add(CGPoint.make(478, 234));	// 6
+//		pointList.add(CGPoint.make(473, 171));	// 7
+//		pointList.add(CGPoint.make(412, 120));	// 8
+//		pointList.add(CGPoint.make(361, 106));	// 9
+//		pointList.add(CGPoint.make(267, 78));	// 10
+//		pointList.add(CGPoint.make(199, 91));	// 11
+//		pointList.add(CGPoint.make(130, 133));	// 12
+//		pointList.add(CGPoint.make(81, 177));	// 13
+//		pointList.add(CGPoint.make(63, 232));	// 14
+//		pointList.add(CGPoint.make(43, 311));	// 15
+//		pointList.add(CGPoint.make(68, 380));	// 16
+//		pointList.add(CGPoint.make(87, 452));	// 17
+//		pointList.add(CGPoint.make(146, 504));	// 18
+//		pointList.add(CGPoint.make(191, 535));	// 19
+//		pointList.add(CGPoint.make(273, 547));	// 20
+	}
+
+	@Override
+	public boolean ccTouchesMoved(MotionEvent e)
+	{
+	    // convert event location to CCPoint
+	   
+		CCSprite tmp = null;
+		
+		CGPoint p = CCDirector.sharedDirector()
+            	.convertToGL(CGPoint.make(e.getX(), e.getY()));
+
+	   tmp = getItem(e.getX(), e.getY());
+
+	   Log.d("PBS","position " + e.getX() + " " + e.getY());
+	   
+	   
+	   
+	   if(tmp != null){
+		   // Compare Point List
+		   for(CGPoint cgp : pointList){
+			   	if(cgp.x == tmp.getPosition().x && s.height -cgp.y == tmp.getPosition().y ){
+			   		Log.d("PBS",pointList.size() + " " + pointList.indexOf(cgp)+1);
+			   		if(pointList.size() == pointList.indexOf(cgp)+1){
+			   			tmp.runAction(CCJumpTo.action(2, CGPoint.make(187, s.height - 680), 50, 1));
+			 		   //tmp.setPosition(273,s.height-546);
+			   			
+			   			break;
+			   		}else{
+				   		tmp.runAction(CCJumpTo.action(0.5f, CGPoint.make(pointList.get(pointList.indexOf(cgp)+1).x, s.height-pointList.get(pointList.indexOf(cgp)+1).y), 50, 1));
+				   		break;
+			   		}
+			   	}
+		   }
+		   
+		   if(!(187 == tmp.getPosition().x && s.height -680 == tmp.getPosition().y ))
+			   tmp.setPosition(pointList.get(0).x,s.height-pointList.get(0).y);
+		   
+		   
+//		   
+//		   if(!(tmp.getPosition().x == 273  && tmp.getPosition().y == s.height -546 )){
+//			   tmp.setPosition(273,s.height-546);
+//			   //tmp.runAction(CCJumpTo.action(4, CGPoint.make(300, 48), 100, 1));
+//		   }else if(tmp != null && (tmp.getPosition().x == 273  && tmp.getPosition().y == s.height -546 )){
+//			   tmp.runAction(CCJumpTo.action(3, CGPoint.make(379, s.height-526), 50, 1));
+//		   }else if(tmp != null){
+//			   Log.d("PBS","TOuch Position : " + tmp.getPosition().x + " "+ tmp.getPosition().y);
+//		   }
+		   
+	   }
+	//   Log.d("PBS", "Current Position : " + e.getX() + " " + e.getY());
+	   
+	   if(tmp == null && isSelect== true){
+		  // selectMob.setPosition(p.x, p.y);
+		   // update the position of your sprite
+	   }else if(tmp != null && !tmp.equals(selectMob) ){
+		   	selectMob = tmp;
+		   //	selectMob.setPosition(p.x, p.y);
+		   	isSelect = true;
+		   		
+	   }
+
+	    return true;
+	}
+
+
+	 public CCSprite getItem(float x, float y)
+	    {
+	        CCSprite result = null;
+	         
+	        for (CCSprite item : items)
+	        {
+	            CGPoint point = CCDirector.sharedDirector().convertToGL(
+	                    CGPoint.make(x, y));
+	             
+	            if (item.getBoundingBox().contains(point.x, point.y))
+	                result = item;
+	        }
+	        return result;
+	    }
+	
+	 
+
+	public void backCallback(Object Sender){
+		
+		CCDirector.sharedDirector().popScene();
+	}
+	
+	
+}
+

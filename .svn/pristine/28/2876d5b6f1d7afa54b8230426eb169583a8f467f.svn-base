@@ -1,0 +1,22 @@
+package com.secretBox.yutnori.test;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+
+
+public class TestConstants {
+	
+	
+	
+	public final static float increaseValue = 0.001f;
+	public static float xPercent;
+	public static float yPercent;
+	public static boolean isBaseUp ;
+	
+	
+	public final static int centerPointX = 450;
+	public final static int centerPointY = 450;
+	public final static int directionTerm = 50;
+
+
+}
+

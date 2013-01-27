@@ -1,0 +1,302 @@
+package com.secretBox.yutnori;
+
+
+
+import org.cocos2d.actions.base.CCRepeatForever;
+import org.cocos2d.actions.ease.CCEaseExponentialIn;
+import org.cocos2d.actions.interval.CCAnimate;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.menus.CCMenuItemToggle;
+import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.types.CGSize;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriBasicConstants.EFFECT_VOLUME;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+import com.secretBox.yutnori.test.PointTest;
+
+public final class MenuLayer extends CCLayer {
+
+	protected CCScene gScene;
+	protected CCScene sScene;
+	
+	
+	private static YutnoriActivity app;
+
+	YutnoriBasicConstants.EFFECT_VOLUME currentVolume;
+	
+	private CCLayer creditLayer = CCLayer.node();
+	private boolean isCreditVisible = false;
+	
+	private CCSprite eye_animation;
+	private CCSprite background; 
+	private CCSprite creditSprite;
+	
+	private static CCAnimate animate;
+	
+	private CCMenuItemImage exit;
+	private CCMenuItemImage gameStartButton;
+	private CCMenuItemImage storyButton;
+	private CCMenuItemToggle sound;
+	private CCMenuItemToggle backSound;
+	private CCMenuItemImage credit;
+	
+	
+			
+	CCAnimation animation;
+	
+	public MenuLayer(CCScene gS, CCScene sS) {
+		
+		
+		
+
+		app = YutnoriActivity.getActivity();;
+		
+		gScene = gS;
+		
+		sScene = sS;
+
+		// Display BackGround Image
+		background = CCSprite.sprite(YutnoriBasicConstants.MENU_BACKGROUND_IMG);
+		
+		background.setPosition(YutnoriPointConstants.CENTER_POINT);
+		addChild(background);
+		
+		//background.setScale(YutnoriBasicConstants.scale);
+
+
+		
+		animation =  CCAnimation.animation("testAnimation",0.8f);
+	
+		for(String fileName:YutnoriBasicConstants.EYE_PICTURE_NAMES)
+		{
+			animation.addFrame(fileName);	
+		}
+		
+		eye_animation = CCSprite.sprite(YutnoriBasicConstants.EYE_PICTURE_NAMES[0]);
+		animate = CCAnimate.action(animation);	
+		
+		
+		addChild(eye_animation);
+		
+		
+		eye_animation.setPosition(YutnoriPointConstants.EYE_ANIMATION_POSITION);
+		
+		
+		
+		
+		gameStartButton = CCMenuItemImage.item(YutnoriBasicConstants.GAME_START_BUTTON_IMG, YutnoriBasicConstants.GAME_START_BUTTON_PRESSED_IMG, 
+				this, "startCallback");
+
+		gameStartButton.setPosition(YutnoriPointConstants.GAME_START_POSITION);		
+		
+		
+		
+		
+		storyButton = CCMenuItemImage.item(YutnoriBasicConstants.GAME_STORY_BUTTON_IMG, YutnoriBasicConstants.GAME_STORY_BUTTON_PRESSED_IMG,
+				this, "storyCallback");
+
+		storyButton.setPosition(YutnoriPointConstants.GAME_STORY_POSITION);
+		
+		
+
+		
+		
+		CCMenu menu = CCMenu.menu(storyButton,gameStartButton);
+		menu.setPosition(0, 0);
+		
+				
+		
+		
+		
+		addChild(menu);
+
+		
+		
+		
+		sound = CCMenuItemToggle.item(this, "soundCallback",
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_MORE_EFFECT_PLAY_IMG, YutnoriBasicConstants.GAME_MORE_EFFECT_PLAY_IMG),
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_LESS_EFFECT_PLAY_IMG, YutnoriBasicConstants.GAME_LESS_EFFECT_PLAY_IMG),
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_EFFECT_NON_PLAY_IMG, YutnoriBasicConstants.GAME_EFFECT_NON_PLAY_IMG));
+
+		backSound = CCMenuItemToggle.item(this, "backsoundCallback",
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_BACKSOUND_PLAY_IMG, YutnoriBasicConstants.GAME_BACKSOUND_PLAY_IMG),
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_BACKSOUND_NON_PLAY_IMG, YutnoriBasicConstants.GAME_BACKSOUND_NON_PLAY_IMG));
+
+		credit = CCMenuItemImage.item(YutnoriBasicConstants.GAME_CREDIT_BUTTON_IMG, YutnoriBasicConstants.GAME_CREDIT_BUTTON_PRESSED_IMG, this, "creditCallback");
+
+		CCMenu optionMenu = CCMenu.menu(sound, backSound, credit);
+		
+		sound.setPosition(YutnoriPointConstants.GAME_EFFECT_POSITION);
+		backSound.setPosition(YutnoriPointConstants.GAME_BACKSOUND_POSITION);
+		credit.setPosition(YutnoriPointConstants.GAME_CREDIT_POSITION);
+		
+		optionMenu.setPosition(0, 0);
+		addChild(optionMenu);
+
+		makeCredit();
+		PointTest test = new PointTest(eye_animation, this, false);
+		this.setIsTouchEnabled(true);
+		
+	}
+
+	private void makeCredit() {
+
+		creditLayer.setContentSize(CGSize.make(YutnoriBasicConstants.DISPLAY_WIDTH / 2, YutnoriBasicConstants.DISPLAY_HEIGHT / 2));
+		creditLayer.setPosition(0, 0);
+
+		creditSprite = CCSprite.sprite(YutnoriBasicConstants.CREDIT_BACKGROUND_IMG);
+		creditSprite.setPosition(YutnoriPointConstants.CENTER_POINT);
+
+		creditSprite.setOpacity(225);
+		creditLayer.addChild(creditSprite);
+
+		
+		exit = CCMenuItemImage.item(YutnoriBasicConstants.CREDIT_EXIT_IMG,YutnoriBasicConstants.CREDIT_EXIT_IMG,this,"creditExitCallback");
+		exit.setPosition(YutnoriPointConstants.CREDIT_EXIT_POSITION);
+		
+		
+		
+		CCMenu menu = CCMenu.menu(exit);
+		menu.setPosition(0, 0);
+			
+		creditLayer.addChild(menu);
+		
+		exit.setContentSize(exit.getContentSize().width*YutnoriBasicConstants.scale,(exit.getContentSize().width-20)*YutnoriBasicConstants.scale);
+
+		this.addChild(creditLayer);
+
+		creditLayer.setVisible(isCreditVisible);
+	}
+
+
+	public void startCallback(Object sender) {
+		if (isCreditVisible == false) {
+			YutnoriBasicConstants.isBackKey = false;
+			GameManager.getGame().showOrHideLayer();
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(gScene);
+		}
+
+	}
+
+	public void storyCallback(Object sender) {
+		if (isCreditVisible == false) {
+			YutnoriBasicConstants.isBackKey = false;
+			GameManager.getGame().showOrHideLayer();
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(sScene);
+		}
+
+	}
+
+	public void soundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			
+			if(currentVolume == YutnoriBasicConstants.EFFECT_VOLUME.MAX){
+				currentVolume = EFFECT_VOLUME.MIDDLE;
+				
+				SoundEngine.sharedEngine().playEffect(app, R.raw.effect_m);
+				
+			}else if(currentVolume == YutnoriBasicConstants.EFFECT_VOLUME.MIDDLE){
+				currentVolume = EFFECT_VOLUME.MIN;
+				
+			}else {
+				currentVolume = EFFECT_VOLUME.MAX;
+			
+				SoundEngine.sharedEngine().playEffect(app, R.raw.effect);
+				
+			}
+			
+			
+		}
+
+	}
+
+	public void backsoundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			
+			if (YutnoriBasicConstants.isBackSound == true) {
+				SoundEngine.sharedEngine().pauseSound();
+				YutnoriBasicConstants.isBackSound = false;
+			} else {
+				SoundEngine.sharedEngine().resumeSound();
+				YutnoriBasicConstants.isBackSound = true;
+			}
+		}
+
+	}
+
+	public void creditCallback(Object sender) {
+
+		if (isCreditVisible == false) {
+			creditLayer.setVisible(true);
+			isCreditVisible = true;
+		}
+	}
+
+	public void creditExitCallback(Object sender) {
+
+		if (isCreditVisible == true) {
+			
+				isCreditVisible = false;
+				creditLayer.setVisible(false);
+			
+		}
+	}
+
+	
+	
+	@Override
+	public void onEnter() {
+		super.onEnter();
+		YutnoriBasicConstants.isBackKey = false;
+		YutnoriBasicConstants.isBackSound = true;
+		GameManager.getGame().showOrHideLayer();
+		CCEaseExponentialIn ease = CCEaseExponentialIn.action(animate);
+		CCRepeatForever animates =  CCRepeatForever.action(ease);
+		
+	
+		eye_animation.runAction(animates);
+		
+		
+		currentVolume = EFFECT_VOLUME.MAX;
+	
+		SoundEngine.sharedEngine().preloadEffect(app, R.raw.effect_m);
+		SoundEngine.sharedEngine().preloadEffect(app, R.raw.effect);
+		
+		
+		SoundEngine.sharedEngine().playSound(app, R.raw.background_melody2, true);
+
+	}
+
+	public void applyScale(float scale) {
+		
+		background.setScale(scale);
+		storyButton.setScale(scale);
+		gameStartButton.setScale(scale);
+		sound.setScale(scale);
+		backSound.setScale(scale);
+		
+		eye_animation.setScale(scale);
+		
+	
+		
+		creditLayer.setScale(scale);
+		
+		
+	}
+
+	
+	
+}
+
+

@@ -1,0 +1,194 @@
+package com.secretBox.yutnori;
+
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.opengl.CCGLSurfaceView;
+import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.types.CGSize;
+import org.cocos2d.types.ccColor3B;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.secretBox.yutnori.logic.Game;
+
+public class YutnoriActivity extends Activity {
+
+	// private static final String LOG_TAG = SpritesTest.class.getSimpleName();
+	private CCGLSurfaceView mGLSurfaceView;
+	private CCScene mScene = CCScene.node();
+	private CCScene gScene = CCScene.node();
+	private CCScene sScene = CCScene.node();
+	private CCScene exitScene = CCScene.node();
+	private CCLayer exitLayer ;
+	private CGSize s;
+
+    
+	private CCSprite yes;
+	private CCSprite no;
+	
+	private boolean isVisible = false;
+	
+	GameManager gameManage;
+	
+	Game game = new Game();
+	
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		mGLSurfaceView = new CCGLSurfaceView(this);
+		setContentView(mGLSurfaceView);
+
+	
+	}
+
+	private void makeExitMessage() {
+		// TODO Auto-generated method stub
+		
+		exitLayer= CCLayer.node();
+		exitLayer.setContentSize(CGSize.make(s.width / 2, s.height / 2));
+		exitLayer.setPosition(0, 0);
+
+		CCSprite exitSprite = CCSprite.sprite("exit.png");
+		exitSprite.setPosition(s.width / 2, s.height / 2);
+
+		exitSprite.setOpacity(100);
+		exitLayer.addChild(exitSprite);
+
+		yes = CCSprite.sprite("yes.png");
+		yes.setPosition(s.width / 2 -exitSprite.getPosition().x/3, exitSprite.getPosition().y
+				- exitSprite.getTexture().getHeight() / 2
+				+ yes.getTexture().getHeight() / 2);
+		exitLayer.addChild(yes);
+		
+		no = CCSprite.sprite("no.png");
+		no.setPosition(s.width / 2 + exitSprite.getPosition().x/3, exitSprite.getPosition().y
+				- exitSprite.getTexture().getHeight() / 2
+				+ no.getTexture().getHeight() / 2);
+		exitLayer.addChild(no);
+
+
+		//exitScene.addChild(exitLayer);
+
+		
+		
+	}
+
+	
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		// attach the OpenGL view to a window
+		CCDirector.sharedDirector().attachInView(mGLSurfaceView);
+
+		// // set landscape mode
+		// CCDirector.sharedDirector().setLandscape(false);
+
+
+		// show FPS
+		CCDirector.sharedDirector().setDisplayFPS(true);
+
+		// frames per second
+		CCDirector.sharedDirector().setAnimationInterval(1.0f / 60);
+
+		// set portrait
+		CCDirector.sharedDirector().setDeviceOrientation(
+				CCDirector.kCCDeviceOrientationPortrait);
+
+		
+		
+		s =  CCDirector.sharedDirector().winSize();
+		
+		GameLayer gLayer = new GameLayer(100, 500, ccColor3B.ccRED);
+		StoryLayer sLayer = new StoryLayer();
+		MenuLayer mLayer = new MenuLayer(gScene, sScene);
+		
+		//makeExitMessage();
+		
+		mScene.addChild(mLayer);
+		gScene.addChild(gLayer);
+		sScene.addChild(sLayer);
+		
+		makeExitMessage();
+		// Make the Scene active
+		CCDirector.sharedDirector().runWithScene(mScene);
+		
+
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		SoundEngine.sharedEngine().pauseSound();
+		CCDirector.sharedDirector().onPause();
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		SoundEngine.sharedEngine().resumeSound();
+		CCDirector.sharedDirector().onResume();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		CCDirector.sharedDirector().end();
+
+	}
+
+	
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			CCDirector.sharedDirector().getRunningScene().addChild(exitLayer);
+			
+		
+			String alertTitle = getResources().getString(R.string.app_name);
+			String buttonMessage = getResources().getString(R.string.exit_msg);
+			String buttonYes = getResources().getString(R.string.yes_msg);
+			String buttonNo = getResources().getString(R.string.no_msg);
+
+			new AlertDialog.Builder(YutnoriActivity.this)
+					.setTitle(alertTitle)
+					.setMessage(buttonMessage)
+					.setPositiveButton(buttonYes,
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									moveTaskToBack(true);
+									finish();
+								}
+							}).setNegativeButton(buttonNo, null).show();
+		}
+		return true;
+	}
+
+	
+}
+
+     
+       
+  
+ 
+

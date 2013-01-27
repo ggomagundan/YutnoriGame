@@ -1,0 +1,114 @@
+package com.secretBox.yutnori.logic;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+
+public class YutSet {
+	enum PROPERTY
+	{
+		BACKDO,DO,GE,GUL,YUT,MO,NAK
+	};
+	int property;
+	public static final int MOVE_COUNT_BACKDO = -1;
+	public static final int MOVE_COUNT_NAK = 0;
+	public static final int MOVE_COUNT_DO=1;
+	public static final int MOVE_COUNT_GE=2;
+	public static final int MOVE_COUNT_GUL=3;
+	public static final int MOVE_COUNT_YUT=4;
+	public static final int MOVE_COUNT_MO=5;
+	private Set<Yut> yuts = new HashSet();
+	private double nakProbability= 0.01;
+	public YutSet()
+	{
+		int ID=0;
+		for(int i=0;i<3;i++)
+			yuts.add(new Yut(ID++));
+		Yut yut = new Yut(3);
+		yut.bBackDo = true;
+		yuts.add(yut);
+	}
+	
+	public PROPERTY throwYuts()
+	{
+		int frontCount=0;
+		int backCount=0;
+		boolean bBackDo=false;
+		PROPERTY retProperty = PROPERTY.NAK;
+		Yut.FRONTBACK FB;
+		
+		if(nakProbability > Math.random())
+		{
+			return retProperty;
+		}
+		Iterator<Yut> iter= yuts.iterator();
+		while(iter.hasNext())
+		{
+			Yut currentYut = iter.next();
+			FB = currentYut.throwYut();
+			if(FB == Yut.FRONTBACK.FRONT)
+			{
+				frontCount++;
+			}else
+			{
+				backCount++;
+				if(currentYut.bBackDo)
+				{
+					bBackDo=true;
+				}
+			}
+		}
+		if(backCount == 1 && bBackDo )
+		{
+			retProperty =  PROPERTY.BACKDO;
+		}else
+		{
+			switch(backCount)
+			{
+			case 0:
+				retProperty = PROPERTY.MO;
+				break;
+			case 1:
+				retProperty = PROPERTY.DO;
+				break;
+			case 2:
+				retProperty = PROPERTY.GE;
+				break;
+			case 3:
+				retProperty = PROPERTY.GUL;
+				break;
+			case 4:
+				retProperty = PROPERTY.YUT;
+				break;
+			default :;//error;			
+			}
+		}
+		
+		return retProperty;
+	}
+	public static int getMoveCount(PROPERTY p)
+	{
+		int moveCount = 0 ;
+		if(p == PROPERTY.BACKDO)
+		{
+			moveCount = MOVE_COUNT_BACKDO;
+		}else if(p == PROPERTY.DO)
+		{
+			moveCount = MOVE_COUNT_DO;
+		}else if(p == PROPERTY.GE)
+		{
+			moveCount = MOVE_COUNT_GE;
+		}else if(p == PROPERTY.GUL)
+		{
+			moveCount = MOVE_COUNT_GUL;
+		}else if(p == PROPERTY.YUT)
+		{
+			moveCount = MOVE_COUNT_YUT;
+		}else if(p == PROPERTY.MO)
+		{
+			moveCount = MOVE_COUNT_MO;
+		}
+		return moveCount;
+	}
+	
+}

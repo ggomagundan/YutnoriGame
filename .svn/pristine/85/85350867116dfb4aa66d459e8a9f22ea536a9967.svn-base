@@ -1,0 +1,24 @@
+package com.secretBox.yutnori;
+import java.util.ArrayList;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+
+import com.secretBox.yutnori.constants.YutnoriLogicConstants;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+
+
+public class CharacterLayer extends CCLayer{
+	ArrayList<CCSprite> simCharList  = new ArrayList<CCSprite>();
+	ArrayList<CCSprite> hCharList  =  new ArrayList<CCSprite>();
+	
+	public CharacterLayer()
+	{
+		hCharList.add(CCSprite.sprite(YutnoriLogicConstants.MAIN_H_CHAR_FILE_NAMES[0]));
+		hCharList.get(0).setPosition(CGPoint.make(YutnoriPointConstants.hCharacterPositionX, YutnoriPointConstants.hCharacterPositionY));
+		addChild(hCharList.get(0));
+		
+	}
+
+}

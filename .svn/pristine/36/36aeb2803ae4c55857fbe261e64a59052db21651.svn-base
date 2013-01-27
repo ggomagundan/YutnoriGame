@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, TestActivity!</string>
+    <string name="app_name">SecretBox_Yutnori</string>
+    <string name="exit_msg">정말로 종료하시겠습니까?</string>
+    <string name="yes_msg">예</string>
+    <string name="no_msg">아니요</string>
+
+</resources>

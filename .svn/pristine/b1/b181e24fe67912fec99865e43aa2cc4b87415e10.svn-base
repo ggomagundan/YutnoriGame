@@ -1,0 +1,92 @@
+package com.secretBox.yutnori;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCMultiplexLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemLabel;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGSize;
+import org.cocos2d.types.ccColor3B;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+
+import android.util.Log;
+
+public class StoryLayer1 extends CCLayer {
+	CCMultiplexLayer mLayer;
+
+	public StoryLayer1() {
+		super();
+	
+
+		
+		CCSprite background = CCSprite.sprite(YutnoriBasicConstants.Story_SECOND_IMG);
+		background.setPosition(YutnoriPointConstants.CENTER_POINT);
+
+		addChild(background);
+		// Set Screen Scale
+		if ((YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth()) >= (YutnoriBasicConstants.DISPLAY_HEIGHT / background
+				.getTexture().getHeight())) {
+			background.setScale(YutnoriBasicConstants.DISPLAY_HEIGHT / background.getTexture().getHeight());
+			Log.d("PBS", "scale " + YutnoriBasicConstants.DISPLAY_HEIGHT
+					/ background.getTexture().getHeight());
+
+		} else {
+			background.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+			Log.d("PBS", "scale " + YutnoriBasicConstants.DISPLAY_WIDTH
+					/ background.getTexture().getWidth());
+		}
+		
+		CCMenuItemLabel label = CCMenuItemLabel.item("back", this, "backCallback");
+
+		CCMenuItemLabel label1 = CCMenuItemLabel.item("pre", this, "preCallback");
+
+		CCMenuItemLabel label2 = CCMenuItemLabel.item("next", this, "nextCallback");
+
+		CCMenu menu = CCMenu.menu();
+		menu.addChild(label);
+		menu.addChild(label1);
+		menu.addChild(label2);
+		menu.setPosition(0, 0);
+
+		label.setPosition(YutnoriPointConstants.STORY_BACK_POSITION);
+		label1.setPosition(YutnoriPointConstants.STORY_PRE_POSITION);
+		label2.setPosition(YutnoriPointConstants.STORY_NEXT_POSITION);
+
+		addChild(menu);
+		// addChild(cl);
+
+		
+
+	}
+
+	public void backCallback(Object Sender) {
+
+		CCDirector.sharedDirector().popScene();
+		CCDirector.sharedDirector().popScene();
+
+	}
+
+	public void preCallback(Object Sender) {
+
+		CCDirector.sharedDirector().popScene();
+
+	}
+
+	public void nextCallback(Object Sender) {
+
+		CCScene s = CCScene.node();
+		StoryLayer2 cLayer = new StoryLayer2();
+		s.addChild(cLayer);
+
+		CCDirector.sharedDirector().pushScene(
+				CCDirector.sharedDirector().getRunningScene());
+		CCDirector.sharedDirector().replaceScene(s);
+
+	}
+
+}

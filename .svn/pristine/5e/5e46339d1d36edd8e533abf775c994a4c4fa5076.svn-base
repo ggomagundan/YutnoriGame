@@ -1,0 +1,114 @@
+package com.secretBox.yutnori.logic;
+
+
+import java.util.HashMap;
+
+import java.util.Map;
+import java.util.Set;
+
+
+public class Game {
+	
+	public static final int HORSECOUNT=4;
+	private Board board = new Board();
+	private YutSet yuts = new YutSet();
+	
+	private Map<Integer,Player> players= new HashMap<Integer,Player>();
+	private int currentPlayerIndex=0;
+	
+	public Game()
+	{
+		
+		
+	}
+	private void makePlayers(int userCount,int cpuCount)
+	{
+		int playerID=0;
+		players.clear();
+		for(int i=0;i<userCount;i++)
+			players.put(playerID++,new UserPlayer(HORSECOUNT));
+		for(int i=0;i<cpuCount;i++)
+			players.put(playerID++,new ComputerPlayer(HORSECOUNT));
+	}
+	//?úÌåê??Í≤åÏûÑ Ï¥àÍ∏∞??
+	public void start()
+	{
+		//?úÏûë???åÎ†à?¥Ïñ¥ ?ãÌåÖ
+		makePlayers(1,1);
+		//?åÎ†à?¥Ïñ¥ ?úÏÑú ?ïÌïòÍ∏?
+		currentPlayerIndex = 0;
+		Set<Integer> pIDs =players.keySet();
+		Node n = board.getNodeByID(Board.START_ID);
+		for(Integer pID:pIDs)
+		{
+			Player  p = players.get(pID);
+			p.initHorses(n);
+		}
+		
+	}
+	//?∑ÎçòÏß?äî ??ûÑ
+	public YutSet.PROPERTY throwYuts()
+	{
+		YutSet.PROPERTY yutsProperty = yuts.throwYuts();
+		return yutsProperty;
+	}
+	public Map<Integer,Set<Integer>> getMovableInfo(YutSet.PROPERTY p) //Map<horseID,Set<nodeID>>
+	{
+		return getCurrentPlayer().getMovableHorses(p);
+	}
+	public void move(int horseID,int nodeID)
+	{
+		Node targetNode=board.getNodeByID(nodeID);
+		
+		
+		if(!targetNode.horses.isEmpty() && 
+			(targetNode.getHorsesOwner() != getCurrentPlayer()))
+		{
+			Node startNode=board.getNodeByID(Board.START_ID);
+			targetNode.moveAllHorses(startNode);
+		}
+		Player currentPlayer = getCurrentPlayer();
+		
+		if(currentPlayer.isStarted(horseID))
+			currentPlayer.moveHorse(horseID, board.getStartTempNode());
+		currentPlayer.moveAllHorses(horseID,targetNode);
+	}
+	
+	public void changeTurn()
+	{
+		currentPlayerIndex =(currentPlayerIndex + 1)%players.size();
+	}
+	protected Player getCurrentPlayer()
+	{
+		return players.get(currentPlayerIndex);
+	}
+	
+	public int getWinPlayer()
+	{
+		
+		return -1;
+		// return Win Player ID
+	}
+	//?úÌåê??Í≤åÏûÑ ?ùÎÇò??Î∂?∂Ñ
+	public void end()
+	{
+		
+	}
+	
+	// Map <HorseId, NodeId>
+	public Map<Integer,Map<Integer, Integer>> getAllHorsesPosition() {
+	
+		Map<Integer,Map<Integer,Integer>> retPlayerIDs_horseIDs_nodeIDs = 
+			new HashMap<Integer,Map<Integer,Integer>>();
+		Set<Integer> playerIDs = players.keySet();
+		
+		for(Integer playerID:playerIDs)
+		{
+			Map<Integer,Integer> horseIDs_nodeIDs = players.get(playerID).getHorsesPosition();
+			retPlayerIDs_horseIDs_nodeIDs.put(playerID, horseIDs_nodeIDs);
+		}
+		return retPlayerIDs_horseIDs_nodeIDs;
+	}
+	
+	
+}

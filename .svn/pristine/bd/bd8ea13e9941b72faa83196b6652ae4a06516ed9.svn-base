@@ -1,0 +1,240 @@
+package com.secretBox.yutnori;
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCDirector;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriLogicConstants;
+import com.secretBox.yutnori.constants.YutnoriLogicConstants.GameStep;
+import com.secretBox.yutnori.logic.Game;
+import com.secretBox.yutnori.logic.YutSet;
+
+public class GameManager {
+	
+	private Map<Integer,Map<Integer,YutSet.PROPERTY>> horseID_nodeIDs_property = new HashMap<Integer,Map<Integer,YutSet.PROPERTY>>();
+
+
+	public boolean isHumanTurn =true;
+	private GameStep gameStep =  YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN;
+	
+	public YutSet.PROPERTY yutProperty;
+	
+	public static GameManager gm  =null;
+	public static Game game = new Game();
+
+	private CCScene mScene;
+	private CCScene gScene;
+	private CCScene sScene;
+	private MenuLayer mLayer;
+	private GameLayer gLayer;
+	private StoryLayer sLayer;
+	private ExitLayer eLayer;
+	private YutnoriActivity app;
+	
+	
+	private GameManager(){
+		
+		app = YutnoriActivity.getActivity();
+	}
+	
+	
+	public static GameManager getGame() {
+
+
+		if(gm == null){
+			gm = new GameManager();
+		}
+
+
+		
+		return gm;
+	}
+
+	public void makeScene() {
+		
+		mScene = CCScene.node();
+		gScene = CCScene.node();
+		sScene = CCScene.node();
+
+	}
+
+	public void makeLayer() {
+		
+		mLayer = new MenuLayer(gScene, sScene);
+		gLayer = new GameLayer();
+		sLayer = new StoryLayer(0);
+		eLayer = ExitLayer.getLayer();
+
+		
+		mScene.addChild(mLayer);
+		gScene.addChild(gLayer);
+		sScene.addChild(sLayer);
+
+	}
+
+	public void start() {
+	
+		setLayerScale();
+		CCDirector.sharedDirector().runWithScene(mScene);
+	}
+	private void setLayerScale() {
+		
+		mLayer.applyScale(YutnoriBasicConstants.scale);
+		gLayer.applyScale(YutnoriBasicConstants.scale);
+		sLayer.applyScale(YutnoriBasicConstants.scale);
+		
+	}
+
+
+	public GameStep getStep()
+	{
+		return gameStep;
+	}
+	
+	
+	public void changeStep(YutnoriLogicConstants.GameStep toStep)
+	{
+		gameStep = toStep;
+	}
+	public void changeStep()
+	{
+		if(gameStep == YutnoriLogicConstants.GameStep.ENEMY_TURN)
+		{
+			gameStep  = YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.YUT_INTERACTION_TURN;
+		}
+		else if(gameStep == YutnoriLogicConstants.GameStep.YUT_INTERACTION_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.YUT_THROWING_TURN;
+			
+		}else if(gameStep == YutnoriLogicConstants.GameStep.YUT_THROWING_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.YUT_ANING_OFF_TURN;
+		}
+		else if(gameStep == YutnoriLogicConstants.GameStep.YUT_ANING_OFF_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.MAL_INTERACTION_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.MAL_INTERACTION_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.MOVE_INTERACTION_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.MOVE_INTERACTION_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.MOVE_ANING_TURN;
+		}else if(gameStep == YutnoriLogicConstants.GameStep.MOVE_ANING_TURN)
+		{
+			gameStep = YutnoriLogicConstants.GameStep.ENEMY_TURN;
+		}
+		
+	}
+
+	public boolean moveCharacter(int characterValue, int moveNumber) {
+
+		gLayer.moveCharater(characterValue, moveNumber);
+
+		return true;
+	}	
+	public void gameInit()
+	{
+		//if(game == null){
+			game = new Game();
+		//}
+		gameStep = YutnoriLogicConstants.GameStep.YUT_ANING_ON_TURN;
+		game.start();
+		
+	}
+
+	public void changeTurn()
+	{
+		game.changeTurn();
+		if(isHumanTurn)
+			isHumanTurn =false;
+		else
+			isHumanTurn =true;
+		
+		//}while((winPlayer = game.getWinPlayer())==-1);
+	}
+
+	public boolean isStarted(int horseID)
+	{
+		return game.isStarted(horseID);
+	}
+	public int getHorseIDbyNodeID(int nodeID)
+	{
+		return game.getHorseIDbyNodeID(nodeID);
+	}
+	public Map<Integer,Map<Integer,Integer>> getAllHorsesPosition()
+	{
+		return game.getAllHorsesPosition();	
+	}
+	public int getHorsePosition(int horseID)
+	{
+		return game.getHorsePosition(horseID);
+	}
+	public YutSet.PROPERTY throwYuts()
+	{
+		return yutProperty = game.throwYuts();
+	}
+
+	public Map<Integer,Map<Integer,YutSet.PROPERTY>> getMovableInfo(List<YutSet.PROPERTY> yutSet)
+	{
+		return horseID_nodeIDs_property  = game.getMovableInfo(yutSet);
+		//todo:UserPlayer 라면
+		//todo:움직일수 있는곳 표시
+		//todo:[사용자 입력] 움직일곳 터치
+
+		//todo:cpuPlayer 라면
+		//todo:AI로 움직일곳 선정
+		
+	}
+	public void move(int horseID,int nodeID)
+	{
+		game.move(horseID, nodeID);
+		
+	}
+	public boolean havePeerByHorseID(int horseID)
+	{
+		return game.havePeerByHorseID(horseID);
+	}
+
+	public void showOrHideLayer() {
+		
+		eLayer.showOrHideLayer();
+		
+	}
+	public boolean haveOtherTeamHorse(int nodeID){
+		return game.haveOtherTeamHorse(nodeID);
+	}
+
+
+	public static void setEndGame() {
+		// TODO Auto-generated method stub
+		game = null;
+	}
+
+
+	public void setBackSound() {
+		// TODO Auto-generated method stub
+		app.controlSound(true, 0);
+	}
+
+
+	public void setEffectSound(int volume) {
+		// TODO Auto-generated method stub
+		app.controlSound(false, volume);
+		
+	}
+
+	
+	
+
+	
+
+}

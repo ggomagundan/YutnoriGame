@@ -1,0 +1,52 @@
+package com.secretBox.yutnori;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.nodes.CCSprite;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+
+
+public class CharSelectLayer extends CCLayer {
+	CCMenuItemImage backButton= null;
+	
+	public CharSelectLayer()
+	{
+		/*
+		super();
+		
+		CCSprite sprite = CCSprite.sprite("game_img/char_select_background.png");
+		addChild(sprite);
+		sprite.setPosition(YutnoriBasicConstants.DISPLAY_WIDTH/2 ,YutnoriBasicConstants.DISPLAY_HEIGHT/2);
+		CCMenuItemImage  charButton1 = CCMenuItemImage.item("big_h.png","big_h2.png",
+				this, "callbackChar1Button");
+
+		charButton1.setPosition(YutnoriBasicConstants.DISPLAY_WIDTH/2 ,YutnoriBasicConstants.DISPLAY_HEIGHT/2+180);		
+		CCMenu menu = CCMenu.menu(charButton1);
+		menu.setPosition(0, 0);
+		addChild(menu);
+		
+		CCMenuItemImage  charButton2 = CCMenuItemImage.item("big_sim.png","big_sim2.png",
+				this, "callbackChar2Button");
+
+		charButton2.setPosition(YutnoriBasicConstants.DISPLAY_WIDTH/2 ,YutnoriBasicConstants.DISPLAY_HEIGHT/2-180);		
+		CCMenu menu2 = CCMenu.menu(charButton2);
+		menu.setPosition(0, 0);
+		addChild(menu2);
+
+		
+		*/
+		
+	
+	}
+	public void callbackChar1Button(Object sender)
+	{
+		
+	}
+	public void callbackChar2Button(Object sender)
+	{
+		
+	}
+}
+

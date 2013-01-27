@@ -1,0 +1,114 @@
+package com.secretBox.yutnori;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCNode;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGSize;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+
+public class ExitLayer extends CCLayer {
+	
+	public static ExitLayer layer= null;
+	static YutnoriActivity app;
+	
+	private static CCMenuItemImage yes;
+	private static CCMenuItemImage no;
+	
+	public static ExitLayer getLayer() {
+		
+		if(layer == null){
+			layer =new ExitLayer();
+			init();
+		}
+		return layer;
+		
+	}
+	
+	private ExitLayer(){
+		super();
+	}
+	
+	private static void init() {
+		
+		app = YutnoriActivity.getActivity();
+		
+		
+		
+		
+		layer.setContentSize(CGSize.make(YutnoriBasicConstants.DISPLAY_WIDTH/2, YutnoriBasicConstants.DISPLAY_HEIGHT/2));
+		layer.setPosition(0, 0);
+	
+		CCSprite exitBackground = CCSprite.sprite(YutnoriBasicConstants.GAME_EXIT_BACKGROUND_IMG);
+	
+		
+		exitBackground.setPosition(YutnoriPointConstants.CENTER_POINT);
+	
+		exitBackground.setOpacity(100);
+		layer.addChild(exitBackground);
+	
+		
+		yes = CCMenuItemImage.item(YutnoriBasicConstants.GAME_EXIT_YES_IMG, YutnoriBasicConstants.GAME_EXIT_YES_IMG, layer, "yesCallback");
+		yes.setPosition(YutnoriPointConstants.GAME_EXIT_YES_POSITION);
+		
+		
+		no =  CCMenuItemImage.item(YutnoriBasicConstants.GAME_EXIT_NO_IMG,YutnoriBasicConstants.GAME_EXIT_NO_IMG,layer,"noCallback");
+		no.setPosition(YutnoriPointConstants.GAME_EXIT_NO_POSITION);
+		
+	
+	
+		CCMenu menu = CCMenu.menu(yes,no);
+		menu.setPosition(0, 0);
+		
+		layer.addChild(menu);
+	
+		layer.setIsTouchEnabled(true);	
+
+		
+	}
+
+	
+	
+	
+	public void noCallback(Object Sender) {
+
+		YutnoriBasicConstants.isBackKey = false;
+		
+		showOrHideLayer();
+	}
+	
+	public void yesCallback(Object Sender) {
+
+		YutnoriBasicConstants.isBackKey = false;
+		CCDirector.sharedDirector().end();
+		app.onDestroy();
+		
+		
+	}
+
+	
+
+	public void showOrHideLayer() {
+		if(YutnoriBasicConstants.isBackKey == true){
+			if(!(CCDirector.sharedDirector().getRunningScene().getChildren().contains(layer))){
+				CCDirector.sharedDirector().getRunningScene().addChild(layer);
+			}
+			layer.setVisible(YutnoriBasicConstants.isBackKey);
+		}else{
+			layer.setVisible(YutnoriBasicConstants.isBackKey);
+			
+		}
+		
+		
+		
+	}
+
+
+}

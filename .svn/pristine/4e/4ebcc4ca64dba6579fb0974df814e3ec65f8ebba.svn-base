@@ -1,0 +1,120 @@
+package com.secretBox.yutnori.logic;
+
+
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+public class TestMain {
+
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		
+	//	Laucher laucher = new Laucher();
+		Game game = new Game();
+		int computer_horse_number=0, user_horse_number=0;
+		int isComputer =0;
+		
+		while(true)
+		{
+			int winPlayer=-1;
+			game.start();//게임시작 초기화
+			do
+			{
+				//todo:[사용자 입력] 윷 던지기
+				YutSet.PROPERTY yutProperty = game.throwYuts();//실제 던지기
+		//		Map<Integer,Set<Integer>> horseID_nodeIDs = game.getMovableInfo(yutProperty);//움직일수 있는곳
+				
+			
+				
+				//todo:UserPlayer 라면
+				//todo:움직일수 있는곳 표시
+				//todo:[사용자 입력] 움직일곳 터치
+
+				//todo:cpuPlayer 라면
+				//todo:AI로 움직일곳 선정
+				 
+				 
+				int selectedHorseID=0;
+				int selectedNodeID=0;
+				Map<Integer,Map<Integer,Integer>> horsePosition = new HashMap<Integer,Map<Integer,Integer>>();
+				
+				horsePosition = game.getAllHorsesPosition();
+				Map<Integer,Integer> userhorseP = horsePosition.get(0);
+				Map<Integer,Integer> comhorseP = horsePosition.get(1);
+				
+				if(userhorseP.get(user_horse_number) >= 30){
+					user_horse_number++;
+					
+				} else if(comhorseP.get(computer_horse_number) >= 30){
+					computer_horse_number++;
+					
+				}
+				
+				if(isComputer ==0){
+					selectedHorseID = user_horse_number;
+					
+				}else{
+					selectedHorseID = computer_horse_number;
+					
+				}
+				
+				Set<Integer> node_list=null;// = horseID_nodeIDs.get(selectedHorseID);
+				
+				System.out.print(yutProperty.ordinal()  +  "Moveable position : ");
+				for(Integer nodeID:node_list)
+				{
+				//	System.out.print(nodeID + " ");
+					selectedNodeID = nodeID;
+				}
+				
+				game.move(selectedHorseID,selectedNodeID);
+				
+				System.out.println("player " + selectedHorseID + " horse is move to" + selectedNodeID);
+				
+			/////////////////////////////////////////////////////////////////
+				// 이동 경로 확인을 위한 구문
+						
+		//		laucher.draw(horsePosition, yutProperty.ordinal());
+				
+				System.out.println("Player's Horse Position");
+				for(int i =0 ; i < 4; i++){
+		//			System.out.print(horsePosition.get(i) + " " );
+				}
+				
+				
+			
+				
+				//todo:움직이는 애니메이션,기타 애니메이션
+				
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+/////////////////////////////////////////////		
+				if(yutProperty.ordinal() >=4 ){
+					continue;
+				}else{
+					if(isComputer ==0){
+						isComputer = 1;
+					}else{
+						isComputer = 0;
+					}
+					game.changeTurn();
+				}
+				
+				System.out.println();System.out.println();
+				
+			}while(true);
+			
+		//	game.end();//게임 끝내기
+		}
+		
+	}
+
+}

@@ -1,0 +1,20 @@
+package com.secretBox.yutnori.test;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+
+
+public class TestConstants {
+	
+	
+	
+	public final static float increaseValue = 0.001f;
+	public static float xPercent;
+	public static float yPercent;
+	public static boolean isBaseUp ;
+	
+	
+	
+
+
+}
+

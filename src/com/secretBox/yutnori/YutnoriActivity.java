@@ -1,0 +1,217 @@
+package com.secretBox.yutnori;
+
+
+
+
+
+
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.opengl.CCGLSurfaceView;
+import org.cocos2d.sound.SoundEngine;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+
+import com.secretBox.yutnori.database.DBManager;
+
+public class YutnoriActivity extends Activity {
+
+	
+	private CCGLSurfaceView mGLSurfaceView;
+	
+	int[] soundValues;
+
+	private static YutnoriActivity activity;
+	
+	//private boolean isVisible = false;
+	
+	GameManager gameManager;
+	public DBManager mDBManager;
+	
+	
+	public YutnoriActivity(){
+		activity= this;
+	}
+	
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+	
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		mGLSurfaceView = new CCGLSurfaceView(this);
+		setContentView(mGLSurfaceView);
+
+	
+		
+		
+	}
+
+	
+//	public void setSounds() {
+//		soundValues = mDBManager.select(mDBManager);
+//		if(soundValues[0]== 1){
+//			
+//			YutnoriBasicConstants.isBackSound = true;
+//		} else { 
+//			YutnoriBasicConstants.isBackSound = false;
+//		}
+//		
+//	
+//		if(soundValues[1]== 2){
+//			
+//			YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MAX; 
+//		}else if(soundValues[1]== 1){
+//			YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIDDLE;
+//		}else{
+//			YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIN;
+//		}
+//		
+//	}
+
+
+	public static YutnoriActivity getActivity(){
+		
+		return activity;
+	}
+
+	
+	
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		// attach the OpenGL view to a window
+		CCDirector.sharedDirector().attachInView(mGLSurfaceView);
+
+		// show FPS
+		CCDirector.sharedDirector().setDisplayFPS(false);
+
+		// frames per second
+		CCDirector.sharedDirector().setAnimationInterval(1.0f / 60);
+
+		// set portrait
+		CCDirector.sharedDirector().setDeviceOrientation(
+				CCDirector.kCCDeviceOrientationPortrait);
+
+		// Set Screen Scale
+		if ((YutnoriBasicConstants.DISPLAY_WIDTH / YutnoriBasicConstants.GAME_WIDTH) >= (YutnoriBasicConstants.DISPLAY_HEIGHT / YutnoriBasicConstants.GAME_HEIGHT)) {
+			YutnoriBasicConstants.scale = (YutnoriBasicConstants.DISPLAY_HEIGHT / YutnoriBasicConstants.GAME_HEIGHT);
+			Log.d("PBS", "scale " +YutnoriBasicConstants.DISPLAY_HEIGHT  +"/" +YutnoriBasicConstants.GAME_HEIGHT +"  " + YutnoriBasicConstants.scale);
+			YutnoriBasicConstants.isWidthScale = false;
+	
+		} else {
+			YutnoriBasicConstants.scale = (YutnoriBasicConstants.DISPLAY_WIDTH / YutnoriBasicConstants.GAME_WIDTH);
+			Log.d("PBS", "scale " +YutnoriBasicConstants.DISPLAY_WIDTH  +"/" +YutnoriBasicConstants.GAME_WIDTH +"  " + YutnoriBasicConstants.scale);
+			
+			YutnoriBasicConstants.isWidthScale = true;
+		}
+		
+		
+		
+		gameManager = GameManager.getGame();
+		gameManager.start();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		SoundEngine.sharedEngine().pauseSound();
+		CCDirector.sharedDirector().onPause();
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		SoundEngine.sharedEngine().resumeSound();
+		CCDirector.sharedDirector().onResume();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		CCDirector.sharedDirector().end();
+		//moveTaskToBack(true);
+        finish();
+	}
+
+	
+	
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			
+			if(YutnoriBasicConstants.isBackKey == true){
+				YutnoriBasicConstants.isBackKey = false;
+				moveTaskToBack(true);
+		        finish();
+		        onDestroy();
+			}else{
+				YutnoriBasicConstants.isBackKey = true;
+				GameManager.getGame().showOrHideLayer();
+			}
+			Log.d("PBS","Back key is "+ YutnoriBasicConstants.isBackKey);
+			
+		
+		}
+			
+		return true;
+	}
+
+
+	public void controlSound(boolean isPlayBackSound, int volume) {
+		
+		//mDBManager.update(mDBManager, isPlayBackSound, volume);
+		if(isPlayBackSound == true){
+			if(YutnoriBasicConstants.isBackSound == true){
+//				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET backsound = 0;");
+				YutnoriBasicConstants.isBackSound = false;
+				Log.d("PBS","backsound off");
+			} else { 
+//				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET backsound = 1;");
+				YutnoriBasicConstants.isBackSound = true;
+				Log.d("PBS","backsound on");
+			}
+		} else{
+			if(volume == 2){
+//				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET effect = 2;");
+				YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MAX;
+				Log.d("PBS","sound max");
+			}else if(volume == 1){
+//				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET effect = 1;");
+				YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIDDLE;
+				Log.d("PBS","sound middle");
+			}else{
+//				mDB.execSQL("UPDATE " + DBManageConstants.TABLE_NAME + " SET effect = 0;");
+				YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIN;
+				Log.d("PBS","sound min");
+			}
+		}
+	}
+
+
+	
+
+	
+}
+
+     
+       
+  
+ 
+

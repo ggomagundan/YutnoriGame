@@ -1,0 +1,238 @@
+package com.secretBox.yutnori;
+
+
+
+import org.cocos2d.actions.base.CCRepeatForever;
+import org.cocos2d.actions.ease.CCEaseExponentialIn;
+import org.cocos2d.actions.interval.CCAnimate;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.menus.CCMenuItemToggle;
+import org.cocos2d.nodes.CCAnimation;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGSize;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.MotionEvent;
+
+public final class MenuLayer extends CCLayer {
+
+	protected CCScene gScene;
+	protected CCScene sScene;
+	private static Context app;
+	private CCLayer creditLayer = CCLayer.node();
+	private boolean isCreditVisible = false;
+	private CCSprite exit;
+	private CCSprite eye_animation;
+	private static CCAnimate animate;
+	
+	public MenuLayer(CCScene gS, CCScene sS) {
+		
+		
+		
+
+		app = CCDirector.sharedDirector().getActivity().getApplicationContext();
+		gScene = gS;
+		
+		sScene = sS;
+
+		// Display BackGround Image
+		CCSprite background = CCSprite.sprite(YutnoriBasicConstants.MENU_BACKGROUND_IMG);
+		background.setPosition(YutnoriPointConstants.CENTER_POINT);
+		addChild(background);
+		
+		
+		// Set Screen Scale
+		if ((YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth()) >= (YutnoriBasicConstants.DISPLAY_HEIGHT / background.getTexture().getHeight())) {
+			background.setScale(YutnoriBasicConstants.DISPLAY_HEIGHT / background.getTexture().getHeight());
+			Log.d("PBS", "scale " + YutnoriBasicConstants.DISPLAY_HEIGHT / background.getTexture().getHeight());
+
+		} else {
+			background.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+			Log.d("PBS", "scale " + YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		}
+
+		
+		CCAnimation animation =  CCAnimation.animation("testAnimation",0.2f);
+	
+		for(String fileName:YutnoriBasicConstants.EYE_PICTURE_NAMES)
+		{
+			animation.addFrame(fileName);	
+		}
+		
+		eye_animation = CCSprite.sprite(YutnoriBasicConstants.EYE_PICTURE_NAMES[0]);
+		animate = CCAnimate.action(animation);	
+		
+		
+		addChild(eye_animation);
+		
+		
+		eye_animation.setPosition(YutnoriPointConstants.EYE_ANIMATION_POSITION);
+		
+		
+		eye_animation.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		
+		CCMenuItemImage gameStartButton = CCMenuItemImage.item(YutnoriBasicConstants.GAME_START_BUTTON_IMG, YutnoriBasicConstants.GAME_START_BUTTON_PRESSED_IMG, 
+				this, "startCallback");
+		gameStartButton.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		gameStartButton.setPosition(YutnoriPointConstants.GAME_START_POSITION);		
+		addChild(gameStartButton);		
+		
+
+		
+		CCMenuItemImage storyButton = CCMenuItemImage.item(YutnoriBasicConstants.GAME_STORY_BUTTON_IMG, YutnoriBasicConstants.GAME_STORY_BUTTON_PRESSED_IMG,
+				this, "storyCallback");
+		storyButton.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		storyButton.setPosition(YutnoriPointConstants.GAME_STORY_POSITION);
+		
+		CCMenu menu = CCMenu.menu(storyButton,gameStartButton);
+		menu.setPosition(0, 0);
+		
+		
+
+		addChild(menu);
+
+		CCMenuItemToggle sound = CCMenuItemToggle.item(this, "soundCallback",
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_EFFECT_PLAY_IMG, YutnoriBasicConstants.GAME_EFFECT_PLAY_IMG),
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_EFFECT_NON_PLAY_IMG, YutnoriBasicConstants.GAME_EFFECT_NON_PLAY_IMG));
+
+		CCMenuItemToggle backSound = CCMenuItemToggle.item(this, "backsoundCallback",
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_BACKSOUND_PLAY_IMG, YutnoriBasicConstants.GAME_BACKSOUND_PLAY_IMG),
+				CCMenuItemImage.item(YutnoriBasicConstants.GAME_BACKSOUND_NON_PLAY_IMG, YutnoriBasicConstants.GAME_BACKSOUND_NON_PLAY_IMG));
+
+		CCMenuItemImage credit = CCMenuItemImage.item(YutnoriBasicConstants.GAME_CREDIT_BUTTON_IMG, YutnoriBasicConstants.GAME_CREDIT_BUTTON_PRESSED_IMG, this, "creditCallback");
+
+		CCMenu optionMenu = CCMenu.menu(sound, backSound, credit);
+		
+		sound.setPosition(YutnoriPointConstants.GAME_EFFECT_POSITION);
+		backSound.setPosition(YutnoriPointConstants.GAME_BACKSOUND_POSITION);
+		credit.setPosition(YutnoriPointConstants.GAME_CREDIT_POSITION);
+		
+		optionMenu.setPosition(0, 0);
+		addChild(optionMenu);
+
+		makeCredit();
+
+		this.setIsTouchEnabled(true);
+		
+	}
+
+	private void makeCredit() {
+		// TODO Auto-generated method stub
+		creditLayer.setContentSize(CGSize.make(YutnoriBasicConstants.DISPLAY_WIDTH / 2, YutnoriBasicConstants.DISPLAY_HEIGHT / 2));
+		creditLayer.setPosition(0, 0);
+
+		CCSprite creditSprite = CCSprite.sprite(YutnoriBasicConstants.CREDIT_BACKGROUND_IMG);
+		creditSprite.setPosition(YutnoriPointConstants.CENTER_POINT);
+
+		creditSprite.setOpacity(90);
+		creditLayer.addChild(creditSprite);
+
+		exit = CCSprite.sprite(YutnoriBasicConstants.CREDIT_EXIT_IMG);
+		exit.setPosition(YutnoriPointConstants.CREDIT_EXIT_POSITION);
+
+		creditLayer.addChild(exit);
+
+		this.addChild(creditLayer);
+
+		creditLayer.setVisible(isCreditVisible);
+	}
+
+	@Override
+	public boolean ccTouchesMoved(MotionEvent e) {
+		// convert event location to CCPoint
+
+//		CGPoint p = CCDirector.sharedDirector().convertToGL(
+//				CGPoint.make(e.getX(), e.getY()));
+
+	
+
+		Log.d("PBS", "position " + e.getX() + " " + e.getY());
+		
+		if (isCreditVisible == true) {
+			if (e.getX() > exit.getPosition().x - exit.getTexture().getWidth()
+					/ 2
+					&& e.getX() < exit.getPosition().x
+							+ exit.getTexture().getWidth() / 2
+					&& e.getY() < YutnoriBasicConstants.DISPLAY_HEIGHT
+							- (exit.getPosition().y - exit.getTexture()
+									.getHeight() / 2)
+					&& e.getY() > YutnoriBasicConstants.DISPLAY_HEIGHT
+							- (exit.getPosition().y + exit.getTexture()
+									.getHeight() / 2)) {
+				isCreditVisible = false;
+				creditLayer.setVisible(false);
+			}
+		}
+
+		return true;
+	}
+
+	public void startCallback(Object sender) {
+		if (isCreditVisible == false) {
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(gScene);
+		}
+
+	}
+
+	public void storyCallback(Object sender) {
+		if (isCreditVisible == false) {
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(sScene);
+		}
+
+	}
+
+	public void soundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			SoundEngine.sharedEngine().playEffect(app, R.raw.effect);
+		}
+
+	}
+
+	public void backsoundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			if (YutnoriBasicConstants.isBackSound == false) {
+				SoundEngine.sharedEngine().pauseSound();
+				YutnoriBasicConstants.isBackSound = true;
+			} else {
+				SoundEngine.sharedEngine().resumeSound();
+				YutnoriBasicConstants.isBackSound = false;
+			}
+		}
+
+	}
+
+	public void creditCallback(Object sender) {
+
+		if (isCreditVisible == false) {
+			creditLayer.setVisible(true);
+			isCreditVisible = true;
+		}
+	}
+
+	@Override
+	public void onEnter() {
+		super.onEnter();
+		CCEaseExponentialIn ease = CCEaseExponentialIn.action(animate);
+		CCRepeatForever animates =  CCRepeatForever.action(ease);
+		
+		
+		eye_animation.runAction(animates);
+		// SoundEngine.sharedEngine().playSound(app, R.raw.backsound, true);
+
+	}
+
+}

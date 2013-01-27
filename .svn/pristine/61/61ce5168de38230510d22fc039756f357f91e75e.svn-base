@@ -1,0 +1,63 @@
+package com.secretBox.yutnori.constants;
+
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.types.CGSize;
+
+public class YutnoriBasicConstants {
+	
+	public final static CGSize s = CCDirector.sharedDirector().winSize();
+	
+	public final static int DISPLAY_WIDTH = (int) s.width;
+	public final static int DISPLAY_HEIGHT = (int) s.height;
+	
+	
+	public final static String GAME_BACKGROUND_IMG =  "game_background.png";
+	public final static String MENU_BACKGROUND_IMG =  "menu_background.png";
+	
+	public final static String GAME_START_BUTTON_IMG="menu_background_button.png"; 
+	public final static String GAME_START_BUTTON_PRESSED_IMG="menu_background_button_click.png";
+	
+	public final static String GAME_STORY_BUTTON_IMG="story.png"; 
+	public final static String GAME_STORY_BUTTON_PRESSED_IMG="story.png";
+	
+	public final static String GAME_EFFECT_PLAY_IMG="sound.png"; 
+	public final static String GAME_EFFECT_NON_PLAY_IMG="sound1.png";
+	
+	public final static String GAME_BACKSOUND_PLAY_IMG="backsound.png"; 
+	public final static String GAME_BACKSOUND_NON_PLAY_IMG="backsound1.png";
+	
+	public final static String GAME_CREDIT_BUTTON_IMG="credit.png"; 
+	public final static String GAME_CREDIT_BUTTON_PRESSED_IMG="credit.png";
+	
+	public final static String CREDIT_BACKGROUND_IMG = "credit_sc.png";
+	public final static String CREDIT_EXIT_IMG = "end_credit.png";
+	
+	public final static String Story_FIRST_IMG = "first.png";
+	public final static String Story_SECOND_IMG = "second.png";
+	public final static String Story_END_IMG = "end.png";
+	
+	public final static String WOMAN_FILE_NAME = "mob.png";
+	public final static String MAN_FILE_NAME = "mob1.png";
+	
+	public final static String GAME_EXIT_BACKGROUND_IMG = "exit.png";
+	public final static String GAME_EXIT_YES_IMG = "yes.png";
+	public final static String GAME_EXIT_NO_IMG = "no.png";
+	
+	public final static String[] EYE_PICTURE_NAMES={"menu_background_eye0.png",
+			"menu_background_eye1.png",
+			"menu_background_eye2.png",
+			"menu_background_eye3.png"				
+			};
+	
+	
+	
+	public static boolean isBackKey= false;
+	public static boolean isBackSound, isSound;
+	
+	
+	public final static int CHARAC_MOVE_TIME = 1;
+	public final static int CHARAC_MOVE_HEIGHT = 50;
+	public final static int CHARAC_MOVE_JUMP_COUNT = 1;
+	
+
+}

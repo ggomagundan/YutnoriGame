@@ -1,0 +1,455 @@
+package com.secretBox.yutnori;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.cocos2d.actions.instant.CCCallFuncN;
+import org.cocos2d.actions.interval.CCDelayTime;
+import org.cocos2d.actions.interval.CCJumpTo;
+import org.cocos2d.actions.interval.CCMoveTo;
+import org.cocos2d.actions.interval.CCSequence;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemLabel;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCLabel;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.ccColor3B;
+
+import android.util.Log;
+import android.view.MotionEvent;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriLogicConstants.GameStep;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+import com.secretBox.yutnori.logic.YutSet;
+
+public class GameLayer extends CCLayer {
+	//CCMultiplexLayer mLayer;
+
+	private int selectedHorseID = 0;
+	private Map<Integer,Integer>	nodeID_horseID=null;
+	private Map<Integer,Set<Integer>>  horseID_nodeIDs=null;
+
+//	CCSprite selectMob = null;
+
+	
+	ArrayList<CCSprite> playerHorseList = new ArrayList<CCSprite>();
+	ArrayList<CCSprite> cpuHorseList = new ArrayList<CCSprite>();
+	
+	
+	
+	private YutThrowLayer yutLayer = null;
+	private CGPoint centerPoint = null;
+	private CGPoint outOfScreenPoint = null;
+	
+	private CCSprite[] horsePosButtons = new CCSprite[YutnoriPointConstants.MOVE_POINT_LIST.size()];
+	
+	
+	
+
+	public GameLayer() {
+
+		super();
+
+		
+		CCSprite background = CCSprite.sprite(YutnoriBasicConstants.GAME_BACKGROUND_IMG);
+		background.setPosition(CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 2, YutnoriBasicConstants.DISPLAY_HEIGHT / 2));
+		addChild(background);
+		
+		// Set Screen Scale
+		if ((YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth()) >= (YutnoriBasicConstants.DISPLAY_HEIGHT / background
+				.getTexture().getHeight())) {
+			background.setScale(YutnoriBasicConstants.DISPLAY_HEIGHT / background.getTexture().getHeight());
+			
+	
+		} else {
+			background.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+			
+		}
+
+		
+		
+		
+		CCMenuItemLabel label = CCMenuItemLabel.item("back", this, "backCallback");
+		label.setPosition(YutnoriBasicConstants.DISPLAY_WIDTH / 7 * 1, YutnoriBasicConstants.DISPLAY_HEIGHT / 10 * 9);
+
+		CCMenu menu = CCMenu.menu();
+		menu.addChild(label);
+		menu.setPosition(0, 0);
+
+		// 540 * 960 Sensation
+		Log.d("PBS", "width " + YutnoriBasicConstants.DISPLAY_WIDTH + " " + "height " + " " + YutnoriBasicConstants.DISPLAY_HEIGHT);
+
+		
+		
+		
+		for(int i=0;i<4;i++)
+		{
+			CCLabel charCountLabel  = CCLabel.makeLabel(""+i,"Abduction",14);
+			charCountLabel.setColor(new ccColor3B(0, 0, 0));
+			
+			CCSprite womanSprite = CCSprite.sprite(YutnoriBasicConstants.WOMAN_FILE_NAME);
+			addChild(womanSprite);
+			womanSprite.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+			womanSprite.addChild(charCountLabel);
+			playerHorseList.add(womanSprite);
+		
+		}
+		
+		for(int i=0;i<4;i++)
+		{
+			CCLabel charCountLabel  = CCLabel.makeLabel("1","Abduction",14);
+			charCountLabel.setColor(new ccColor3B(0, 0, 0));
+			
+			CCSprite manSprite = CCSprite.sprite(YutnoriBasicConstants.MAN_FILE_NAME);
+			addChild(manSprite);
+			manSprite.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+			manSprite.addChild(charCountLabel);
+			cpuHorseList.add(manSprite);
+		}
+		
+		setCharacterPosition();
+
+		addChild(menu);
+
+		if(yutLayer == null)
+		{
+			yutLayer =  new YutThrowLayer(this);
+			addChild(yutLayer);
+		}
+		
+		if(centerPoint == null)
+		{
+			centerPoint = YutnoriPointConstants.CENTER_POINT;
+			if(outOfScreenPoint  == null)
+				outOfScreenPoint = CGPoint.make(-centerPoint.x, centerPoint.y);
+		}
+		
+		yutLayer.setPosition(outOfScreenPoint.x,outOfScreenPoint.y);
+		GameManager.getGame().gameInit();
+		
+		
+		for(int i=0;i< YutnoriPointConstants.MOVE_POINT_LIST.size();i++)
+		{
+			horsePosButtons[i] = CCSprite.sprite("test_select.png");
+			addChild(horsePosButtons[i]);
+			CGPoint p = YutnoriPointConstants.MOVE_POINT_LIST.get(i);
+			horsePosButtons[i].setPosition(p.x,YutnoriBasicConstants.DISPLAY_HEIGHT-p.y);
+			horsePosButtons[i].setOpacity(200);
+		}
+		hideHorsePosButtons();
+		
+		
+		
+		// Available Touch Event
+		this.setIsTouchEnabled(true);
+	}
+
+
+	private void hideHorsePosButtons()
+	{
+		for(CCSprite horsePosButton:horsePosButtons)
+			horsePosButton.setVisible(false);
+	}
+	private void setCharacterPosition() {
+		
+		
+		for (CCSprite temp : playerHorseList) {
+			temp.setPosition(YutnoriPointConstants.F_HORSE_POINT_LIST.get(playerHorseList.indexOf(temp)));
+		}
+		for (CCSprite temp : cpuHorseList) {
+			temp.setPosition(YutnoriPointConstants.S_HORSE_POINT_LIST.get(cpuHorseList.indexOf(temp)));
+		}
+
+
+	}
+
+
+	private int findIndexFromHorsePosButtons(CCSprite sprite)
+	{
+		for(int i=0;i<horsePosButtons.length;i++)
+		{
+			if(horsePosButtons[i] == sprite)
+				return i;
+		}
+		return -1;
+	}
+
+	private CCSprite hitTestWithCCSprite(float x,float y,CCSprite[] sprites)
+	{
+		CGPoint point = CCDirector.sharedDirector().convertToGL(CGPoint.make(x, y));
+		for (CCSprite sprite : sprites) {
+			if (sprite.getBoundingBox().contains(point.x, point.y))
+				return sprite;
+		
+		}
+		return null;
+	}
+	private CCSprite hitTestWithCCSprite(float x,float y,ArrayList<CCSprite> spriteList)
+	{
+		CCSprite[] sprites= new CCSprite[spriteList.size()];
+		spriteList.toArray(sprites);
+		return hitTestWithCCSprite(x,y,sprites);
+	}
+		
+
+	
+	
+	@Override
+	public boolean ccTouchesEnded(MotionEvent e)
+	{
+		
+		if(GameManager.getGame().getStep() == GameStep.YUT_INTERACTION_TURN) //윷던지기
+		{
+			yutLayer.stopYutAnimation();
+			yutLayer.throwYut();
+			yutLayer.callbackYutFinished(null);
+			 
+		}else if(GameManager.getGame().getStep() == GameStep.MAL_INTERACTION_TURN) // 말선택턴
+		{
+			ArrayList<CCSprite> selectHorsePosButtonList = new ArrayList<CCSprite>(); 
+			Set<Integer> horseIDs = horseID_nodeIDs.keySet();
+			for(Integer horseID : horseIDs)
+			{
+				int nodeID = GameManager.getGame().getHorsePosition(horseID);
+				selectHorsePosButtonList.add(horsePosButtons[nodeID]);
+			}
+			
+
+			CCSprite hittedHorsePosButton = hitTestWithCCSprite(e.getX(),e.getY(),selectHorsePosButtonList);
+			
+			if(hittedHorsePosButton !=null)
+			{
+				hideHorsePosButtons();
+				
+				
+				int nodeID = findIndexFromHorsePosButtons(hittedHorsePosButton);
+				
+				int horseID = nodeID_horseID.get(nodeID);
+				Set<Integer> nodeIDs = horseID_nodeIDs.get(horseID);
+				for(Integer movableNodeID:nodeIDs)
+				{
+					horsePosButtons[movableNodeID].setVisible(true);
+				}
+				selectedHorseID = horseID;
+				GameManager.getGame().changeStep();
+				
+			}
+
+					
+			
+			
+		}else if(GameManager.getGame().getStep() == GameStep.MOVE_INTERACTION_TURN) // 말 이동 가능한곳
+		{
+			ArrayList<CCSprite> selectHorsePosButtonList = new ArrayList<CCSprite>(); 
+			Set<Integer> nodeIDs = horseID_nodeIDs.get(selectedHorseID);
+			for(Integer nodeID:nodeIDs)
+			{
+				selectHorsePosButtonList.add(horsePosButtons[nodeID]);
+			}
+			CCSprite hittedHorsePosButton = hitTestWithCCSprite(e.getX(),e.getY(),selectHorsePosButtonList);
+			
+			if(hittedHorsePosButton !=null)
+			{
+				hideHorsePosButtons();
+				int nodeID = findIndexFromHorsePosButtons(hittedHorsePosButton);
+				moveCharater(selectedHorseID,nodeID);
+				GameManager.getGame().move(selectedHorseID,nodeID);
+				if(GameManager.getGame().havePeerByHorseID(selectedHorseID))
+				{
+					
+				}
+				GameManager.getGame().changeStep();
+				
+			}
+		}
+		
+		
+		return true;
+	}	
+	
+	@Override
+	public boolean ccTouchesMoved(MotionEvent e) {
+		
+/*
+		CCSprite tmp = null;
+		int characterIndex;
+		
+		// convert event location to CCPoint
+//		CGPoint p = CCDirector.sharedDirector().convertToGL(
+//				CGPoint.make(e.getX(), e.getY()));
+
+		tmp = getItem(e.getX(), e.getY());
+
+		Log.d("PBS", "GameBoard Touch position " + e.getX() + " " + e.getY());
+
+		if (tmp != null) {
+			characterIndex = hoursList.indexOf(tmp);
+			Log.d("PBS", "Touch Charater Index " + characterIndex);
+
+			// Compare Point List
+			for (CGPoint point : YutnoriPointConstants.MOVE_POINT_LIST) {
+				if (point.x == tmp.getPosition().x && YutnoriBasicConstants.DISPLAY_HEIGHT - point.y == tmp.getPosition().y) {
+
+					if (YutnoriPointConstants.MOVE_POINT_LIST.size() == YutnoriPointConstants.MOVE_POINT_LIST.indexOf(point) + 1) {
+						moveCharater(characterIndex, YutnoriPointConstants.HORSE_END_POINT_LIST.get(characterIndex));
+						break;
+					} else {
+						moveCharater(characterIndex, (YutnoriPointConstants.MOVE_POINT_LIST.indexOf(point) + 1));
+						break;
+					}
+				}
+			}
+
+
+			if ((YutnoriPointConstants.HORSE_POINT_LIST.get(characterIndex).x == tmp.getPosition().x && YutnoriPointConstants.HORSE_POINT_LIST.get(characterIndex).y == tmp.getPosition().y)
+					&& (YutnoriPointConstants.HORSE_END_POINT_LIST.get(characterIndex).x == tmp.getPosition().x && YutnoriPointConstants.HORSE_END_POINT_LIST.get(characterIndex).y != tmp.getPosition().y)) {
+				moveCharater(characterIndex, 0);
+			}
+			
+
+		}
+*/
+		
+		return true;
+	}
+/*
+	public CCSprite getItem(float x, float y) {
+		CCSprite result = null;
+
+		for (CCSprite item : hoursList) {
+			CGPoint point = CCDirector.sharedDirector().convertToGL(
+					CGPoint.make(x, y));
+
+			if (item.getBoundingBox().contains(point.x, point.y)){
+				result = item;
+			}
+		}
+		// if(result != null){
+		//
+		// CCTintTo action1 = CCTintTo.action(2, ccColor3B.ccc3(255, 255, 255));
+		// // R값 -127, G값 -255, B값 -127로 농도 변경
+		// CCTintBy action2 = CCTintBy.action(2, ccColor3B.ccc3(-127, -255,
+		// -255));
+		// // 거꾸로
+		// CCTintBy action2Back = action2.reverse();
+		//
+		//
+		// result.runAction(action1);
+		// result.runAction(CCSequence.actions(action2, action2Back));
+		// }
+		return result;
+	}
+*/
+	
+	public void backCallback(Object Sender) {
+		YutnoriBasicConstants.isBackKey = false;
+		GameManager.getGame().showOrHideLayer();
+		CCDirector.sharedDirector().popScene();
+	}
+
+	public void moveCharater(int characterIndex, int moveNumber) {
+
+		CGPoint movePoint = CGPoint.make(YutnoriPointConstants.MOVE_POINT_LIST.get(moveNumber).x, 
+				YutnoriBasicConstants.DISPLAY_HEIGHT - YutnoriPointConstants.MOVE_POINT_LIST.get(moveNumber).y);
+		
+		moveCharater(characterIndex, movePoint);
+		
+		
+	}
+
+	private void moveCharater(int characterIndex, CGPoint movePoint) {
+
+		CCSprite character;
+		if(GameManager.getGame().isHumanTurn) 
+			character = playerHorseList.get(characterIndex);
+		else
+			character = cpuHorseList.get(characterIndex);
+			
+		CCJumpTo jumpToAni = CCJumpTo.action(YutnoriBasicConstants.CHARAC_MOVE_TIME, movePoint, YutnoriBasicConstants.CHARAC_MOVE_HEIGHT, YutnoriBasicConstants.CHARAC_MOVE_JUMP_COUNT);
+		CCCallFuncN callbackAni = CCCallFuncN.action(this,"callbackCharMoveFinished");
+		character.runAction(CCSequence.actions(jumpToAni,callbackAni));
+
+	}
+	public void hideYutThrowLayer()
+	{
+		CGPoint toPoint=outOfScreenPoint;
+		CCMoveTo moveAni = CCMoveTo.action(0.1f,toPoint);
+		CCCallFuncN callbackAni = CCCallFuncN.action(this,"callbackYutHide");
+		yutLayer.runAction(CCSequence.actions(moveAni,callbackAni));
+
+	}
+	public void showYutThrowLayer()
+	{
+		CGPoint toPoint=centerPoint;
+		
+		CCMoveTo moveAni = CCMoveTo.action(0.1f,toPoint);
+		CCDelayTime delayAni = CCDelayTime.action(0.25f);
+		CCCallFuncN callbackAni = CCCallFuncN.action(yutLayer,"callbackYutShow");
+		yutLayer.runAction(CCSequence.actions(moveAni,delayAni,callbackAni));
+	}
+	public void callbackYutHide(Object Sender)
+	{
+		
+		if(GameManager.getGame().isHumanTurn == true){
+			if(GameManager.getGame().yutProperty == YutSet.PROPERTY.NAK)
+			{
+				GameManager.getGame().changeStep(GameStep.ENEMY_TURN);
+				GameManager.getGame().changeTurn();
+				showYutThrowLayer();
+			}else
+			{
+				nodeID_horseID = new HashMap<Integer,Integer>();
+				horseID_nodeIDs = GameManager.getGame().getMovableInfo();
+				Set<Integer> horseIDs = horseID_nodeIDs.keySet();
+				for(Integer horseID : horseIDs)
+				{
+					int nodeID = GameManager.getGame().getHorsePosition(horseID);
+					horsePosButtons[nodeID].setVisible(true);
+					nodeID_horseID.put(nodeID, horseID);
+				
+				}
+				GameManager.getGame().changeStep();
+			}
+			
+		}else
+		{
+			
+			
+			if(GameManager.getGame().yutProperty == YutSet.PROPERTY.NAK)
+			{
+				GameManager.getGame().changeStep(GameStep.YUT_ANING_ON_TURN);
+				GameManager.getGame().changeTurn();
+				showYutThrowLayer();
+			}else
+			{
+				//AI need
+				horseID_nodeIDs = GameManager.getGame().getMovableInfo();
+				Set<Integer> horseIDs = horseID_nodeIDs.keySet();
+				for(Integer horseID : horseIDs)
+				{
+					Set<Integer> nodeIDs = horseID_nodeIDs.get(horseID);
+					for(Integer nodeID:nodeIDs)
+					{
+						//실제 데이터 이동된값 적용
+						moveCharater(horseID, nodeID);
+						return;
+					}
+					
+				
+				}
+			}
+		}		
+	}
+	public void callbackCharMoveFinished(Object Sender)
+	{
+		GameManager.getGame().changeStep();
+		GameManager.getGame().changeTurn();
+		showYutThrowLayer();
+		
+	}
+}

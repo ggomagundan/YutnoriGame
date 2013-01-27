@@ -1,0 +1,136 @@
+package com.secretBox.yutnori.constants;
+
+import java.util.ArrayList;
+
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+
+public class YutnoriPointConstants {
+	
+	private final static int characterPositionY = (int) (YutnoriBasicConstants.DISPLAY_HEIGHT - (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.9f));
+	private final static int endCharacterPositionY = (int) (YutnoriBasicConstants.DISPLAY_HEIGHT - (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.7f));
+	
+	public final static CGPoint CENTER_POINT = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 2, YutnoriBasicConstants.DISPLAY_HEIGHT / 2);
+	
+	public final static CGPoint EYE_ANIMATION_POSITION = CGPoint.make((float)(YutnoriBasicConstants.DISPLAY_WIDTH*0.34519), 
+			(float)(YutnoriBasicConstants.DISPLAY_HEIGHT*0.4240));
+	
+	public final static CGPoint GAME_START_POSITION = CGPoint.make((float)(YutnoriBasicConstants.DISPLAY_WIDTH*0.770), 
+			(float)((YutnoriBasicConstants.DISPLAY_HEIGHT-YutnoriBasicConstants.DISPLAY_HEIGHT*0.7736)));//15.8));
+	
+	public final static CGPoint GAME_STORY_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 5 *2, YutnoriBasicConstants.DISPLAY_HEIGHT / 5*3);
+	
+	public final static CGPoint GAME_EFFECT_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 3 * 2, 
+			(int) (YutnoriBasicConstants.DISPLAY_HEIGHT*0.07));
+	public final static CGPoint GAME_BACKSOUND_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 3 * 2 + YutnoriBasicConstants.DISPLAY_WIDTH / 8, 
+			(int) (YutnoriBasicConstants.DISPLAY_HEIGHT*0.07));
+	public final static CGPoint GAME_CREDIT_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 3 * 2 + YutnoriBasicConstants.DISPLAY_WIDTH / 4, 
+			(int) (YutnoriBasicConstants.DISPLAY_HEIGHT*0.07));
+	
+	public final static CGPoint CREDIT_EXIT_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 2, 
+			CENTER_POINT.y - CCSprite.sprite(YutnoriBasicConstants.CREDIT_BACKGROUND_IMG).getTexture().getHeight() / 2 
+			+ CCSprite.sprite(YutnoriBasicConstants.CREDIT_EXIT_IMG).getTexture().getHeight() / 2);
+	
+	public final static CGPoint STORY_BACK_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 10 * 2, (int)(YutnoriBasicConstants.DISPLAY_HEIGHT*0.052));
+	public final static CGPoint STORY_PRE_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 10 * 6, (int)(YutnoriBasicConstants.DISPLAY_HEIGHT*0.052));
+	public final static CGPoint STORY_NEXT_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 10 * 8, (int)(YutnoriBasicConstants.DISPLAY_HEIGHT*0.052));
+	
+	public final static CGPoint GAME_EXIT_YES_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH/2 - CENTER_POINT.x/3,
+			CENTER_POINT.y - CCSprite.sprite(YutnoriBasicConstants.GAME_EXIT_BACKGROUND_IMG).getTexture().getHeight()/2
+			+ CCSprite.sprite(YutnoriBasicConstants.GAME_EXIT_YES_IMG).getTexture().getHeight()/2);
+	
+	public final static CGPoint GAME_EXIT_NO_POSITION = CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH/2 + CENTER_POINT.x/3,
+			CENTER_POINT.y - CCSprite.sprite(YutnoriBasicConstants.GAME_EXIT_BACKGROUND_IMG).getTexture().getHeight()/2
+			+ CCSprite.sprite(YutnoriBasicConstants.GAME_EXIT_NO_IMG).getTexture().getHeight()/2);
+			
+			
+			
+	
+	
+	
+	// First Horse Start Point
+	public final static ArrayList<CGPoint>  F_HORSE_POINT_LIST = new ArrayList<CGPoint>();
+	static {
+		F_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.12), characterPositionY));
+		F_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.20), characterPositionY));
+		F_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.28), characterPositionY));
+		F_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.36), characterPositionY));
+
+	}
+	
+	// Second Horse Start Point
+	public final static ArrayList<CGPoint>  S_HORSE_POINT_LIST = new ArrayList<CGPoint>();
+	static {
+		S_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.60), characterPositionY));
+		S_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.68), characterPositionY));
+		S_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.76), characterPositionY));
+		S_HORSE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.84), characterPositionY));
+	}
+	
+	
+	// First Horse End Point
+	public final static ArrayList<CGPoint>  F_HORSE_END_POINT_LIST = new ArrayList<CGPoint>();
+	static{
+		F_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.12), endCharacterPositionY));
+		F_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.20), endCharacterPositionY));
+		F_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.28), endCharacterPositionY));
+		F_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.36), endCharacterPositionY));
+	}
+	
+	// Second Horse End Point
+	public final static ArrayList<CGPoint>  S_HORSE_END_POINT_LIST = new ArrayList<CGPoint>();
+	static{
+		S_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.60), endCharacterPositionY));
+		S_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.68), endCharacterPositionY));
+		S_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.76), endCharacterPositionY));
+		S_HORSE_END_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.84), endCharacterPositionY));
+	}
+	
+	
+	
+	
+	
+	
+	// Board Move Point
+	public final static ArrayList<CGPoint>  MOVE_POINT_LIST = new ArrayList<CGPoint>();
+	static{
+			
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.70))); // 0 startPoint
+
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.70), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.55))); // 1 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.80), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.51))); // 2 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.87), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.47))); // 3 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.94), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.41))); // 4 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.94), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 5 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.91), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.24))); // 6 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.87), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.18))); // 7 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.76), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.12))); // 8 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.66), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.1))); // 9  
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.08))); // 10 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.36), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.09))); // 11 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.24), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.13))); // 12 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.15), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.18))); // 13 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.11), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.24))); // 14
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.07), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 15 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.10), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.39))); // 16 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.16), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.47))); // 17 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.26), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.52))); // 18 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.35), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.55))); // 19 
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.571))); // 20 
+			
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.794), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 21
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.647), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 22
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 23
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.364), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 24
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.217), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.32))); // 25
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.16))); // 26
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.24))); // 27
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.40))); // 28
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.50), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.48))); // 29
+			
+			MOVE_POINT_LIST.add(CGPoint.make((int) (YutnoriBasicConstants.DISPLAY_WIDTH * 0.70), (int) (YutnoriBasicConstants.DISPLAY_HEIGHT * 0.70))); // 30
+		
+			
+	}
+
+}

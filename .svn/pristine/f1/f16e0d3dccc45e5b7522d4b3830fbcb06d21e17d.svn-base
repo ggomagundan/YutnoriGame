@@ -1,0 +1,229 @@
+package com.secretBox.yutnori;
+
+
+
+
+import com.secretBox.yutnori.database.*;
+
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.opengl.CCGLSurfaceView;
+import org.cocos2d.sound.SoundEngine;
+
+import android.app.Activity;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.Window;
+import android.view.WindowManager;
+
+import com.google.code.microlog4android.Level;
+import com.google.code.microlog4android.Logger;
+import com.google.code.microlog4android.LoggerFactory;
+import com.google.code.microlog4android.appender.FileAppender;
+import com.google.code.microlog4android.appender.LogCatAppender;
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.logic.Game;
+
+public class YutnoriActivity extends Activity {
+
+	
+	private CCGLSurfaceView mGLSurfaceView;
+	
+	int[] soundValues;
+
+	private static YutnoriActivity activity;
+	
+	static public Logger logger = LoggerFactory.getLogger();
+	
+	//private boolean isVisible = false;
+	
+	GameManager gameManager;
+	public DBManager mDBManager;
+	Game game = new Game();
+	
+	public YutnoriActivity(){
+		activity= this;
+	}
+	
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		mGLSurfaceView = new CCGLSurfaceView(this);
+		setContentView(mGLSurfaceView);
+
+		// initialize logger
+	    logger.setLevel(Level.INFO);
+	    // write to LogCat
+	    logger.addAppender(new LogCatAppender());
+	    // write to text file of SD-card.(need WRITE_EXTERNAL_STORAGE permission)
+	    FileAppender fileAppender = new FileAppender();
+	    fileAppender.setAppend(true);
+	    fileAppender.setFileName("microlog4android.log");
+	    logger.addAppender(fileAppender);
+
+	    
+	    mDBManager = new DBManager(this);
+		mDBManager.getReadableDatabase();
+		mDBManager.getWritableDatabase();
+		soundValues =mDBManager.select(mDBManager);
+		Log.d("PBS","sound  " + soundValues[0] + " " + soundValues[1]);
+		//setSounds(soundValues);
+		mDBManager.close();
+		
+		
+	}
+
+	
+	public void setSounds() {
+		// TODO Auto-generated method stub
+		soundValues = mDBManager.select(mDBManager);
+		if(soundValues[0]== 1){
+			
+			YutnoriBasicConstants.isBackSound = true;
+		} else { 
+			YutnoriBasicConstants.isBackSound = false;
+		}
+		
+	
+		if(soundValues[1]== 2){
+			
+			YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MAX; 
+		}else if(soundValues[1]== 1){
+			YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIDDLE;
+			
+		}else{
+			YutnoriBasicConstants.currentVolume = YutnoriBasicConstants.EFFECT_VOLUME.MIN;
+			
+		}
+		
+	}
+
+
+	public static YutnoriActivity getActivity(){
+		
+		return activity;
+	}
+
+	
+	
+
+	@Override
+	public void onStart() {
+		super.onStart();
+
+		// attach the OpenGL view to a window
+		CCDirector.sharedDirector().attachInView(mGLSurfaceView);
+
+		// show FPS
+		CCDirector.sharedDirector().setDisplayFPS(true);
+
+		// frames per second
+		CCDirector.sharedDirector().setAnimationInterval(1.0f / 60);
+
+		// set portrait
+		CCDirector.sharedDirector().setDeviceOrientation(
+				CCDirector.kCCDeviceOrientationPortrait);
+
+		// Set Screen Scale
+		if ((YutnoriBasicConstants.DISPLAY_WIDTH / YutnoriBasicConstants.GAME_WIDTH) >= (YutnoriBasicConstants.DISPLAY_HEIGHT / YutnoriBasicConstants.GAME_HEIGHT)) {
+			YutnoriBasicConstants.scale = (YutnoriBasicConstants.DISPLAY_HEIGHT / YutnoriBasicConstants.GAME_HEIGHT);
+			Log.d("PBS", "scale " +YutnoriBasicConstants.DISPLAY_HEIGHT  +"/" +YutnoriBasicConstants.GAME_HEIGHT +"  " + YutnoriBasicConstants.scale);
+			YutnoriBasicConstants.isWidthScale = false;
+	
+		} else {
+			YutnoriBasicConstants.scale = (YutnoriBasicConstants.DISPLAY_WIDTH / YutnoriBasicConstants.GAME_WIDTH);
+			Log.d("PBS", "scale " +YutnoriBasicConstants.DISPLAY_WIDTH  +"/" +YutnoriBasicConstants.GAME_WIDTH +"  " + YutnoriBasicConstants.scale);
+			
+			YutnoriBasicConstants.isWidthScale = true;
+		}
+		
+		
+		
+		gameManager = GameManager.getGame();
+				
+	
+		gameManager.makeScene();
+		gameManager.makeLayer();
+		gameManager.start();
+
+	
+		
+		
+
+		
+
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		SoundEngine.sharedEngine().pauseSound();
+		CCDirector.sharedDirector().onPause();
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		SoundEngine.sharedEngine().resumeSound();
+		CCDirector.sharedDirector().onResume();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+
+		CCDirector.sharedDirector().end();
+		moveTaskToBack(true);
+        finish();
+	}
+
+	
+	
+
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_BACK:
+			
+			if(YutnoriBasicConstants.isBackKey == true){
+				YutnoriBasicConstants.isBackKey = false;
+				moveTaskToBack(true);
+		        finish();
+			}else{
+				YutnoriBasicConstants.isBackKey = true;
+			}
+			GameManager.getGame().showOrHideLayer();
+			
+		
+			
+		}
+			
+		return true;
+	}
+
+
+	public void controlSound(boolean isPlayBackSound, int volume) {
+		
+		mDBManager.update(mDBManager, isPlayBackSound, volume);
+	}
+
+
+	
+
+	
+}
+
+     
+       
+  
+ 
+

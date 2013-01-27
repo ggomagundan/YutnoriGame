@@ -1,0 +1,117 @@
+package com.secretBox.yutnori;
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.types.ccColor3B;
+
+import com.secretBox.yutnori.constants.YutnoriLogicConstants.GameStep;
+import com.secretBox.yutnori.logic.Game;
+import com.secretBox.yutnori.logic.YutSet;
+
+public class GameManager {
+	
+	
+
+	private GameStep gameStep =  GameStep.THROW_TURN;
+	public YutSet.PROPERTY yutProperty;
+	
+	public static GameManager gm  =null;
+	public Game game = new Game();
+
+	private CCScene mScene;
+	private CCScene gScene;
+	private CCScene sScene;
+	private MenuLayer menu;
+	private GameLayer gLayer;
+	private StoryLayer sLayer;
+
+	
+	private GameManager(){}
+	
+	
+	public static GameManager getGame() {
+
+
+		if(gm == null){
+			gm = new GameManager();
+		}
+
+
+		// TODO Auto-generated method stub
+		return gm;
+	}
+
+	public void makeScene() {
+		// TODO Auto-generated method stub
+		mScene = CCScene.node();
+		gScene = CCScene.node();
+		sScene = CCScene.node();
+
+	}
+
+	public void makeLayer() {
+	
+		menu = new MenuLayer(gScene, sScene);
+		gLayer = new GameLayer();
+		sLayer = new StoryLayer();
+
+		mScene.addChild(menu);
+		gScene.addChild(gLayer);
+		sScene.addChild(sLayer);
+
+	}
+
+	public void start() {
+	
+		CCDirector.sharedDirector().runWithScene(mScene);
+	}
+	public void gameInit()
+	{
+		game.start();
+		
+	}
+	public YutSet.PROPERTY throwYuts()
+	{
+		return yutProperty = game.throwYuts();
+	}
+	public GameStep getStep()
+	{
+		
+		return gameStep;
+	}
+	public void getMovableInfo()
+	{
+		Map<Integer,Set<Integer>> horseID_nodeIDs  = game.getMovableInfo(yutProperty);
+		//todo:UserPlayer 라면
+		//todo:움직일수 있는곳 표시
+		//todo:[사용자 입력] 움직일곳 터치
+
+		//todo:cpuPlayer 라면
+		//todo:AI로 움직일곳 선정
+		
+	}
+	public void getAllHorsesPosition()
+	{
+		Map<Integer,Map<Integer,Integer>> horsePosition = new HashMap<Integer,Map<Integer,Integer>>();
+		horsePosition = game.getAllHorsesPosition();
+		
+	}
+	public void changeTurn()
+	{
+		game.changeTurn();
+		//}while((winPlayer = game.getWinPlayer())==-1);
+	}
+
+	public boolean moveCharacter(int characterValue, int moveNumber) {
+
+		gLayer.moveCharater(characterValue, moveNumber);
+
+		return true;
+	}
+
+}

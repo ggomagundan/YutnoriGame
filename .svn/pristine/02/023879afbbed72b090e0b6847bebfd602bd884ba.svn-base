@@ -1,0 +1,35 @@
+package com.secretBox.yutnori.constants;
+
+public class YutnoriLogicConstants {
+	
+	public static enum GameStep{
+		ENEMY_TURN,
+		YUT_ANING_ON_TURN,
+		YUT_INTERACTION_TURN,
+		YUT_ANING_OFF_TURN,
+		MAL_INTERACTION_TURN,
+		MOVE_INTERACTION_TURN,
+		MOVE_ANING_TURN,
+	};
+	
+	public final static String[] YUT_FILE_NAMES=
+		{"yut/yut_nak.png",
+			"yut/yut_backdo.png",
+			"yut/yut_do.png",
+			"yut/yut_ge.png",
+			"yut/yut_gul.png",
+			"yut/yut_yut.png",
+			"yut/yut_mo.png"
+			};
+	
+	public final static String[] YUT_CHAR_FILE_NAMES = 
+		{"yut/yut_nak_char.png",
+			"yut/yut_backdo_char.png",
+			"yut/yut_do_char.png",
+			"yut/yut_ge_char.png",
+			"yut/yut_gul_char.png",
+			"yut/yut_yut_char.png",
+			"yut/yut_mo_char.png"
+			};
+
+}

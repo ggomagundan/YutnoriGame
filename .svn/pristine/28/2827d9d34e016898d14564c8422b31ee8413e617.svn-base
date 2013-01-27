@@ -1,0 +1,225 @@
+package com.secretBox.yutnori;
+
+import java.util.ArrayList;
+
+import org.cocos2d.actions.interval.CCJumpTo;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemLabel;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+
+import android.util.Log;
+import android.view.MotionEvent;
+
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+import com.secretBox.yutnori.constants.YutnoriPointConstants;
+
+public class GameLayer extends CCLayer {
+
+
+
+	
+	//CCMultiplexLayer mLayer;
+	CCSprite selectMob = null;
+	ArrayList<CCSprite> hoursList = new ArrayList<CCSprite>();
+	boolean isSelect = false;
+
+	public GameLayer() {
+
+		super();
+		
+		CCSprite background = CCSprite.sprite(YutnoriBasicConstants.GAME_BACKGROUND_IMG);
+		background.setPosition(CGPoint.make(YutnoriBasicConstants.DISPLAY_WIDTH / 2, YutnoriBasicConstants.DISPLAY_HEIGHT / 2));
+		addChild(background);
+		
+		// Set Screen Scale
+		if ((YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth()) >= (YutnoriBasicConstants.DISPLAY_HEIGHT / background
+				.getTexture().getHeight())) {
+			background.setScale(YutnoriBasicConstants.DISPLAY_HEIGHT / background.getTexture().getHeight());
+			Log.d("PBS", "scale " + YutnoriBasicConstants.DISPLAY_HEIGHT
+					/ background.getTexture().getHeight());
+	
+		} else {
+			background.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+			Log.d("PBS", "scale " + YutnoriBasicConstants.DISPLAY_WIDTH
+					/ background.getTexture().getWidth());
+		}
+
+		CCMenuItemLabel label = CCMenuItemLabel.item("back", this, "backCallback");
+		label.setPosition(YutnoriBasicConstants.DISPLAY_WIDTH / 7 * 1, YutnoriBasicConstants.DISPLAY_HEIGHT / 10 * 9);
+
+		CCMenu menu = CCMenu.menu();
+		menu.addChild(label);
+		menu.setPosition(0, 0);
+
+		// 540 * 960 Sensation
+		Log.d("PBS", "width " + YutnoriBasicConstants.DISPLAY_WIDTH + " " + "height " + " " + YutnoriBasicConstants.DISPLAY_HEIGHT);
+
+		CCSprite woman_1 = CCSprite.sprite(YutnoriBasicConstants.WOMAN_FILE_NAME);
+		CCSprite woman_2 = CCSprite.sprite(YutnoriBasicConstants.WOMAN_FILE_NAME);
+		CCSprite woman_3 = CCSprite.sprite(YutnoriBasicConstants.WOMAN_FILE_NAME);
+		CCSprite woman_4 = CCSprite.sprite(YutnoriBasicConstants.WOMAN_FILE_NAME);
+
+		addChild(woman_1);
+		addChild(woman_2);
+		addChild(woman_3);
+		addChild(woman_4);
+		woman_1.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		woman_2.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		woman_3.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		woman_4.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+
+		CCSprite man_1 = CCSprite.sprite(YutnoriBasicConstants.MAN_FILE_NAME);
+		CCSprite man_2 = CCSprite.sprite(YutnoriBasicConstants.MAN_FILE_NAME);
+		CCSprite man_3 = CCSprite.sprite(YutnoriBasicConstants.MAN_FILE_NAME);
+		CCSprite man_4 = CCSprite.sprite(YutnoriBasicConstants.MAN_FILE_NAME);
+
+		addChild(man_1);
+		addChild(man_2);
+		addChild(man_3);
+		addChild(man_4);
+		man_1.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		man_2.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		man_3.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		man_4.setScale(YutnoriBasicConstants.DISPLAY_WIDTH / background.getTexture().getWidth());
+		
+		hoursList.add(woman_1);
+		hoursList.add(woman_2);
+		hoursList.add(woman_3);
+		hoursList.add(woman_4);
+		hoursList.add(man_1);
+		hoursList.add(man_2);
+		hoursList.add(man_3);
+		hoursList.add(man_4);
+		
+
+		setCharacterPosition();
+
+		addChild(menu);
+
+		YutThrowLayer yutLayer =  new YutThrowLayer();
+		addChild(yutLayer);
+		yutLayer.setPosition(YutnoriBasicConstants.DISPLAY_WIDTH/2,YutnoriBasicConstants.DISPLAY_HEIGHT/2);
+		
+		
+		// Available Touch Event
+		this.setIsTouchEnabled(true);
+
+		
+		
+		
+		
+
+	}
+
+	private void setCharacterPosition() {
+		
+		for (CCSprite temp : hoursList) {
+			temp.setPosition(YutnoriPointConstants.HORSE_POINT_LIST.get(hoursList.indexOf(temp)));
+		}
+
+	}
+
+	
+		
+
+
+	@Override
+	public boolean ccTouchesMoved(MotionEvent e) {
+		
+/*
+		CCSprite tmp = null;
+		int characterIndex;
+		
+		// convert event location to CCPoint
+//		CGPoint p = CCDirector.sharedDirector().convertToGL(
+//				CGPoint.make(e.getX(), e.getY()));
+
+		tmp = getItem(e.getX(), e.getY());
+
+		Log.d("PBS", "GameBoard Touch position " + e.getX() + " " + e.getY());
+
+		if (tmp != null) {
+			characterIndex = hoursList.indexOf(tmp);
+			Log.d("PBS", "Touch Charater Index " + characterIndex);
+
+			// Compare Point List
+			for (CGPoint point : YutnoriPointConstants.MOVE_POINT_LIST) {
+				if (point.x == tmp.getPosition().x && YutnoriBasicConstants.DISPLAY_HEIGHT - point.y == tmp.getPosition().y) {
+
+					if (YutnoriPointConstants.MOVE_POINT_LIST.size() == YutnoriPointConstants.MOVE_POINT_LIST.indexOf(point) + 1) {
+						moveCharater(characterIndex, YutnoriPointConstants.HORSE_END_POINT_LIST.get(characterIndex));
+						break;
+					} else {
+						moveCharater(characterIndex, (YutnoriPointConstants.MOVE_POINT_LIST.indexOf(point) + 1));
+						break;
+					}
+				}
+			}
+
+
+			if ((YutnoriPointConstants.HORSE_POINT_LIST.get(characterIndex).x == tmp.getPosition().x && YutnoriPointConstants.HORSE_POINT_LIST.get(characterIndex).y == tmp.getPosition().y)
+					&& (YutnoriPointConstants.HORSE_END_POINT_LIST.get(characterIndex).x == tmp.getPosition().x && YutnoriPointConstants.HORSE_END_POINT_LIST.get(characterIndex).y != tmp.getPosition().y)) {
+				moveCharater(characterIndex, 0);
+			}
+			
+
+		}
+		*/
+		
+
+		return true;
+	}
+
+	public CCSprite getItem(float x, float y) {
+		CCSprite result = null;
+
+		for (CCSprite item : hoursList) {
+			CGPoint point = CCDirector.sharedDirector().convertToGL(
+					CGPoint.make(x, y));
+
+			if (item.getBoundingBox().contains(point.x, point.y)){
+				result = item;
+			}
+		}
+		// if(result != null){
+		//
+		// CCTintTo action1 = CCTintTo.action(2, ccColor3B.ccc3(255, 255, 255));
+		// // R값 -127, G값 -255, B값 -127로 농도 변경
+		// CCTintBy action2 = CCTintBy.action(2, ccColor3B.ccc3(-127, -255,
+		// -255));
+		// // 거꾸로
+		// CCTintBy action2Back = action2.reverse();
+		//
+		//
+		// result.runAction(action1);
+		// result.runAction(CCSequence.actions(action2, action2Back));
+		// }
+		return result;
+	}
+
+	public void backCallback(Object Sender) {
+
+		CCDirector.sharedDirector().popScene();
+	}
+
+	public void moveCharater(int characterIndex, int moveNumber) {
+
+		CGPoint movePoint = CGPoint.make(YutnoriPointConstants.MOVE_POINT_LIST.get(moveNumber).x, 
+				YutnoriBasicConstants.DISPLAY_HEIGHT - YutnoriPointConstants.MOVE_POINT_LIST.get(moveNumber).y);
+		
+		moveCharater(characterIndex, movePoint);
+		
+		
+	}
+
+	private void moveCharater(int characterIndex, CGPoint movePoint) {
+
+		CCSprite character = hoursList.get(characterIndex);
+		character.runAction(CCJumpTo.action(YutnoriBasicConstants.CHARAC_MOVE_TIME, movePoint, YutnoriBasicConstants.CHARAC_MOVE_HEIGHT, YutnoriBasicConstants.CHARAC_MOVE_JUMP_COUNT));
+
+	}
+
+}

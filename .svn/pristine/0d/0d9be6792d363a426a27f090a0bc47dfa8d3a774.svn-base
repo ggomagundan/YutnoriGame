@@ -1,0 +1,207 @@
+package com.secretBox.yutnori;
+
+
+
+import org.cocos2d.actions.interval.CCJumpTo;
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.menus.CCMenuItemToggle;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.sound.SoundEngine;
+import org.cocos2d.types.CGPoint;
+import org.cocos2d.types.CGSize;
+
+import android.content.Context;
+import android.util.Log;
+import android.view.MotionEvent;
+
+public final class MenuLayer extends CCLayer {
+
+	protected CCScene gScene;
+	protected CCScene sScene;
+	private static Context app;
+	CGSize s = CCDirector.sharedDirector().winSize();
+	private CCLayer creditLayer = CCLayer.node();
+	private boolean isCreditVisible = false;
+	CCSprite exit;
+	static boolean isBackSound, isSound;
+
+	public MenuLayer(CCScene gS, CCScene sS) {
+
+		app = CCDirector.sharedDirector().getActivity().getApplicationContext();
+		gScene = gS;
+		sScene = sS;
+
+		// Display BackGround Image
+		CCSprite background = CCSprite.sprite("hangi.png");
+		background.setPosition(CGPoint.make(s.width / 2, s.height / 2));
+		addChild(background);
+
+		CCMenuItemImage img = CCMenuItemImage.item("start.png", "start1.png",
+				this, "startCallback");
+		CCMenuItemImage img1 = CCMenuItemImage.item("story.png", "story1.png",
+				this, "storyCallback");
+
+		CCMenu menu = CCMenu.menu(img, img1);
+		menu.setPosition(0, 0);
+		img.setPosition(s.width / 2 - 50, s.height / 2 + 100);
+		img1.setPosition(s.width / 2 - 50, s.height / 2);
+
+		addChild(menu);
+
+		CCMenuItemToggle sound = CCMenuItemToggle.item(this, "soundCallback",
+				CCMenuItemImage.item("sound.png", "sound.png"),
+				CCMenuItemImage.item("sound1.png", "sound1.png"));
+
+		CCMenuItemToggle backSound = CCMenuItemToggle.item(this,
+				"backsoundCallback",
+				CCMenuItemImage.item("backsound.png", "backsound.png"),
+				CCMenuItemImage.item("backsound1.png", "backsound1.png"));
+
+		CCMenuItemImage credit = CCMenuItemImage.item("credit.png",
+				"credit.png", this, "creditCallback");
+
+		CCMenu menu1 = CCMenu.menu(sound, backSound, credit);
+		sound.setPosition(s.width / 3 * 2, 70);
+		backSound.setPosition(s.width / 3 * 2 + s.width / 8, 70);
+		credit.setPosition(s.width / 3 * 2 + s.width / 4, 70);
+		menu1.setPosition(0, 0);
+
+		addChild(menu1);
+
+		makeCredit();
+
+		this.setIsTouchEnabled(true);
+		// Set Screen Scale
+		if ((s.width / background.getTexture().getWidth()) >= (s.height / background
+				.getTexture().getHeight())) {
+			background.setScale(s.height / background.getTexture().getHeight());
+			Log.d("PBS", "scale " + s.height
+					/ background.getTexture().getHeight());
+
+		} else {
+			background.setScale(s.width / background.getTexture().getWidth());
+			Log.d("PBS", "scale " + s.width
+					/ background.getTexture().getWidth());
+		}
+
+	}
+
+	private void makeCredit() {
+		// TODO Auto-generated method stub
+		creditLayer.setContentSize(CGSize.make(s.width / 2, s.height / 2));
+		creditLayer.setPosition(0, 0);
+
+		CCSprite creditSprite = CCSprite.sprite("credit_sc.png");
+		creditSprite.setPosition(s.width / 2, s.height / 2);
+
+		creditSprite.setOpacity(80);
+		creditLayer.addChild(creditSprite);
+
+		exit = CCSprite.sprite("end_credit.png");
+		exit.setPosition(s.width / 2, creditSprite.getPosition().y
+				- creditSprite.getTexture().getHeight() / 2
+				+ exit.getTexture().getHeight() / 2);
+
+		creditLayer.addChild(exit);
+
+		this.addChild(creditLayer);
+
+		creditLayer.setVisible(isCreditVisible);
+	}
+
+	@Override
+	public boolean ccTouchesMoved(MotionEvent e) {
+		// convert event location to CCPoint
+
+		CGPoint p = CCDirector.sharedDirector().convertToGL(
+				CGPoint.make(e.getX(), e.getY()));
+
+		// tmp = getItem(e.getX(), e.getY());
+
+		Log.d("PBS", "position " + e.getX() + " " + e.getY());
+		Log.d("PBS", "position X "
+				+ (exit.getPosition().x - exit.getTexture().getWidth() / 2)
+				+ " ~ "
+				+ (exit.getPosition().x + exit.getTexture().getWidth() / 2));
+		Log.d("PBS", "position Y "
+				+ (exit.getPosition().y - exit.getTexture().getHeight() / 2)
+				+ " ~ "
+				+ (exit.getPosition().y + exit.getTexture().getHeight() / 2));
+		if (isCreditVisible == true) {
+			if (e.getX() > exit.getPosition().x - exit.getTexture().getWidth()
+					/ 2
+					&& e.getX() < exit.getPosition().x
+							+ exit.getTexture().getWidth() / 2
+					&& e.getY() < s.height
+							- (exit.getPosition().y - exit.getTexture()
+									.getHeight() / 2)
+					&& e.getY() > s.height
+							- (exit.getPosition().y + exit.getTexture()
+									.getHeight() / 2)) {
+				isCreditVisible = false;
+				creditLayer.setVisible(false);
+			}
+		}
+
+		return true;
+	}
+
+	public void startCallback(Object sender) {
+		if (isCreditVisible == false) {
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(gScene);
+		}
+
+	}
+
+	public void storyCallback(Object sender) {
+		if (isCreditVisible == false) {
+			CCDirector.sharedDirector().pushScene(
+					CCDirector.sharedDirector().getRunningScene());
+			CCDirector.sharedDirector().replaceScene(sScene);
+		}
+
+	}
+
+	public void soundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			SoundEngine.sharedEngine().playEffect(app, R.raw.effect);
+		}
+
+	}
+
+	public void backsoundCallback(Object sender) {
+		if (isCreditVisible == false) {
+			if (isBackSound == false) {
+				SoundEngine.sharedEngine().pauseSound();
+				isBackSound = true;
+			} else {
+				SoundEngine.sharedEngine().resumeSound();
+				isBackSound = false;
+			}
+		}
+
+	}
+
+	public void creditCallback(Object sender) {
+
+		if (isCreditVisible == false) {
+			creditLayer.setVisible(true);
+			isCreditVisible = true;
+		}
+	}
+
+	@Override
+	public void onEnter() {
+		super.onEnter();
+
+		// SoundEngine.sharedEngine().playSound(app, R.raw.backsound, true);
+
+	}
+
+}

@@ -1,0 +1,55 @@
+package com.secretBox.yutnori;
+
+import org.cocos2d.layers.CCScene;
+import org.cocos2d.nodes.CCDirector;
+import org.cocos2d.types.ccColor3B;
+
+public class GameManager {
+	
+	public static GameManager gm;
+	
+	private CCScene mScene;
+    private CCScene gScene;
+    private CCScene sScene;
+    
+	public GameManager(){
+		
+	}
+
+	public static GameManager getGame() {
+		gm = new GameManager();
+		// TODO Auto-generated method stub
+		return gm;
+	}
+
+	public void makeScene() {
+		// TODO Auto-generated method stub
+		 mScene = CCScene.node();
+		 gScene = CCScene.node();
+		 sScene = CCScene.node();
+		 
+		 
+	}
+
+	public void makeLayer() {
+		// TODO Auto-generated method stub
+		MenuLayer menu = new MenuLayer(gScene,sScene);
+		GameLayer gLayer = new GameLayer(100, 500,ccColor3B.ccRED);
+        StoryLayer sLayer = new StoryLayer();
+        
+        mScene.addChild(menu);
+        gScene.addChild(gLayer);
+        sScene.addChild(sLayer);
+        
+       
+	}
+
+	public void start() {
+		// TODO Auto-generated method stub
+		 CCDirector.sharedDirector().runWithScene(mScene);
+	}
+
+	
+	
+	
+}

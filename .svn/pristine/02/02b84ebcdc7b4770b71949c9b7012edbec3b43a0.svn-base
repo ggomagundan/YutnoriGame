@@ -1,0 +1,141 @@
+package com.secretBox.yutnori.test;
+
+import org.cocos2d.layers.CCLayer;
+import org.cocos2d.menus.CCMenu;
+import org.cocos2d.menus.CCMenuItemImage;
+import org.cocos2d.nodes.CCLabel;
+import org.cocos2d.nodes.CCNode;
+import org.cocos2d.nodes.CCSprite;
+import org.cocos2d.types.CGPoint;
+
+import com.secretBox.yutnori.MenuLayer;
+import com.secretBox.yutnori.constants.YutnoriBasicConstants;
+
+public class PointTest extends CCLayer {
+	private CCLabel labelX;
+	private CCLabel labelY;
+	private CCSprite check;
+	private CCNode node;
+	private float xValue, yValue;
+	
+	public PointTest(CCNode testMoveingNode, CCLayer CurrentLayer, boolean isBaseUp) {
+		
+		node = testMoveingNode;
+		xValue =(float)(testMoveingNode.getPosition().x/YutnoriBasicConstants.DISPLAY_WIDTH);
+		TestConstants.xPercent = xValue;
+		if(isBaseUp == true){
+			yValue = (float)(((-1*testMoveingNode.getPosition().y)+YutnoriBasicConstants.DISPLAY_HEIGHT)/YutnoriBasicConstants.DISPLAY_HEIGHT);
+			TestConstants.yPercent = yValue;
+		}else{
+			yValue = (float)(testMoveingNode.getPosition().y/YutnoriBasicConstants.DISPLAY_HEIGHT);
+			TestConstants.yPercent = yValue;
+		}
+		
+		TestConstants.isBaseUp = isBaseUp;
+		
+		labelX = CCLabel.makeLabel(Float.toString(xValue), "Abduction.ttf", 20);
+		labelX.setPosition(100, 100);
+		labelY = CCLabel.makeLabel(Float.toString(yValue), "Abduction.ttf", 20);
+		labelY.setPosition(100, 50);
+		addChild(labelX);
+		addChild(labelY);
+		check = CCSprite.sprite("test/checkpoint.png");
+		check.setPosition(CGPoint.make(
+				(float) (YutnoriBasicConstants.DISPLAY_WIDTH * xValue),
+				(float) (YutnoriBasicConstants.DISPLAY_HEIGHT * yValue)));
+		addChild(check);
+		
+		
+		CCMenuItemImage upbutton = CCMenuItemImage.item("test/up.png","test/up.png",
+				this, "upCallback");
+		
+		upbutton.setPosition((int)(TestConstants.centerPointX), (int)(TestConstants.centerPointY+TestConstants.directionTerm));
+		
+		CCMenuItemImage downbutton = CCMenuItemImage.item("test/down.png","test/down.png",
+				this, "downCallback");
+		
+	
+		downbutton.setPosition(TestConstants.centerPointX, TestConstants.centerPointY-TestConstants.directionTerm);
+		
+		CCMenuItemImage leftbutton = CCMenuItemImage.item("test/left.png","test/left.png",
+				this, "leftCallback");
+		
+		
+		leftbutton.setPosition(TestConstants.centerPointX-TestConstants.directionTerm, TestConstants.centerPointY);
+		
+		CCMenuItemImage rightbutton = CCMenuItemImage.item("test/right.png","test/right.png",
+				this, "rightCallback");
+		
+		
+		rightbutton.setPosition(TestConstants.centerPointX+TestConstants.directionTerm, TestConstants.centerPointY);
+		
+		CCMenu menu = CCMenu.menu(upbutton,downbutton,leftbutton,rightbutton);
+		menu.setPosition(0, 0);
+		addChild(menu);
+		this.setIsTouchEnabled(true);
+		CurrentLayer.addChild(this);
+	}
+
+	
+	private void setNodePostion(boolean isBaseUp) {
+		if(isBaseUp== true){
+			node.setPosition(CGPoint.make(
+					(float) (YutnoriBasicConstants.DISPLAY_WIDTH * xValue),
+					(float) (YutnoriBasicConstants.DISPLAY_HEIGHT -YutnoriBasicConstants.DISPLAY_HEIGHT * yValue)));
+			check.setPosition(CGPoint.make(
+					(float) (YutnoriBasicConstants.DISPLAY_WIDTH * xValue),
+					(float) (YutnoriBasicConstants.DISPLAY_HEIGHT - YutnoriBasicConstants.DISPLAY_HEIGHT * yValue)));
+		}else{
+			node.setPosition(CGPoint.make(
+				(float) (YutnoriBasicConstants.DISPLAY_WIDTH * xValue),
+				(float) (YutnoriBasicConstants.DISPLAY_HEIGHT * yValue)));
+			check.setPosition(CGPoint.make(
+				(float) (YutnoriBasicConstants.DISPLAY_WIDTH * xValue),
+				(float) ( YutnoriBasicConstants.DISPLAY_HEIGHT * yValue)));
+			
+		}
+		
+	}
+	
+	public void upCallback(Object sender) {
+
+		if(TestConstants.isBaseUp == true){
+			yValue -= TestConstants.increaseValue;
+		} else{
+			yValue += TestConstants.increaseValue;
+		}
+		labelY.setString(Float.toString(yValue));
+		setNodePostion(TestConstants.isBaseUp);
+		
+	}
+
+	
+
+	public void downCallback(Object sender) {
+		
+		if(TestConstants.isBaseUp == true){
+			yValue += TestConstants.increaseValue;
+		} else{
+			yValue -= TestConstants.increaseValue;
+		}
+		labelY.setString(Float.toString(yValue));
+		setNodePostion(TestConstants.isBaseUp);
+
+	}
+
+	public void leftCallback(Object sender) {
+
+		xValue -= TestConstants.increaseValue;
+		labelX.setString(Float.toString(xValue));
+		setNodePostion(TestConstants.isBaseUp);
+		
+	}
+
+	public void rightCallback(Object sender) {
+
+		xValue += TestConstants.increaseValue;
+		labelX.setString(Float.toString(xValue));
+		setNodePostion(TestConstants.isBaseUp);
+		
+	}
+}
